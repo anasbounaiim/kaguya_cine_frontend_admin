@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import { Sidebar, SidebarBody, SidebarLink } from "./ui/sidebar";
 import {
-  IconArrowLeft,
   IconBrandTabler,
   IconSettings,
   IconUserBolt,
@@ -17,6 +16,7 @@ import Users from "./users";
 import Movies from "./movies";
 import Settings from "./settings";
 import Logout from "./logout";
+import Image from "next/image";
 
 export default function AdminHome() {
   const [active, setActive] = useState("dashboard");
@@ -73,7 +73,7 @@ export default function AdminHome() {
                   }}
                   className={cn(
                     "text-sm font-medium",
-                    active === link.id ? "bg-red-600 px-2 py-2  rounded-full text-white" : ""
+                    active === link.id ? "bg-red-600 p-2  rounded-full text-white" : "p-2"
                   )}
                   onClick={() => setActive(link.id)}
                 />
@@ -86,10 +86,12 @@ export default function AdminHome() {
                 label: "Manu Arora",
                 href: "#",
                 icon: (
-                  <img
+                  <Image
                     src="https://assets.aceternity.com/manu.png"
                     className="h-7 w-7 shrink-0 rounded-full"
                     alt="Avatar"
+                    width={7}
+                    height={7}
                   />
                 ),
               }}
@@ -98,7 +100,7 @@ export default function AdminHome() {
         </SidebarBody>
       </Sidebar>
 
-      <main className="flex-1 p-6 overflow-auto bg-white dark:bg-neutral-900">
+      <main className="flex-1 p-6 overflow-auto bg-white dark:bg-neutral-800">
         {active === "dashboard" && <Dashboard />}
         {active === "users" && <Users/>}
         {active === "movies" && <Movies/>}
