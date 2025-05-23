@@ -71,46 +71,7 @@ const Dashboard = () => {
     <div className="space-y-6">
       <h1 className="text-3xl font-bold">Bienvenue sur le tableau de bord</h1>
 
-      <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-      <Card className="p-6">
-        <div className="flex items-center justify-between">
-          <h6 className="text-neutral-100 text-sm">Total Revenue</h6>
-          <div
-            className="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center"
-          >
-            <DollarSign className="w-4 h-4 text-green-500" />
-          </div>
-        </div>
-        <h1 className="text-white text-2xl font-bold">24,260 MAD</h1>
-        <h5 className="text-zinc-400 text-xs mt-2">Last 30 days</h5>
-      </Card>
-      <Card className="p-6">
-        <div className="flex items-center justify-between">
-          <h6 className="text-neutral-100 text-sm">Clients</h6>
-          <div
-            className="w-8 h-8 rounded-full bg-red-50 flex items-center justify-center"
-          >
-            <UsersRound className="w-4 h-4 text-red-500" />
-          </div>
-        </div>
-        <h1 className="text-white text-2xl font-bold">317</h1>
-        <h5 className="text-zinc-400 text-xs mt-2">Last 30 days</h5>
-      </Card>
-      <Card className="p-6">
-        <div className="flex items-center justify-between">
-          <h6 className="text-neutral-100 text-sm">Réservations</h6>
-          <div
-            className="w-8 h-8 rounded-full bg-teal-50 flex items-center justify-center"
-          >
-            <TicketCheck className="w-4 h-4 text-cyan-500" />
-          </div>
-        </div>
-        <h1 className="text-white text-2xl font-bold">21</h1>
-        <h5 className="text-zinc-400 text-xs mt-2">Last 30 days</h5>
-      </Card>
-    </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {loading ? (
           [...Array(3)].map((_, idx) => (
             <div
@@ -120,6 +81,42 @@ const Dashboard = () => {
           ))
         ) : (
           <>
+            <Card className="p-6">
+              <div className="flex items-center justify-between">
+                <h6 className="text-neutral-100 text-sm">Total Revenue</h6>
+                <div
+                  className="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center"
+                >
+                  <DollarSign className="w-4 h-4 text-green-500" />
+                </div>
+              </div>
+              <h1 className="text-white text-2xl font-bold">24,260 MAD</h1>
+              <h5 className="text-zinc-400 text-xs mt-2">Last 30 days</h5>
+            </Card>
+            <Card className="p-6">
+              <div className="flex items-center justify-between">
+                <h6 className="text-neutral-100 text-sm">Clients</h6>
+                <div
+                  className="w-8 h-8 rounded-full bg-red-50 flex items-center justify-center"
+                >
+                  <UsersRound className="w-4 h-4 text-red-500" />
+                </div>
+              </div>
+              <h1 className="text-white text-2xl font-bold">317</h1>
+              <h5 className="text-zinc-400 text-xs mt-2">Last 30 days</h5>
+            </Card>
+            <Card className="p-6">
+              <div className="flex items-center justify-between">
+                <h6 className="text-neutral-100 text-sm">Réservations</h6>
+                <div
+                  className="w-8 h-8 rounded-full bg-teal-50 flex items-center justify-center"
+                >
+                  <TicketCheck className="w-4 h-4 text-cyan-500" />
+                </div>
+              </div>
+              <h1 className="text-white text-2xl font-bold">21</h1>
+              <h5 className="text-zinc-400 text-xs mt-2">Last 30 days</h5>
+            </Card>
             <Card>
               <CardHeader>
                 <CardTitle>Area Chart - Stacked</CardTitle>
