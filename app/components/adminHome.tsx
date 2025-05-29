@@ -23,6 +23,7 @@ import Genre from "./genre";
 import Image from "next/image";
 import Showtimes from "./showtime";
 import Reservations from "./reservation";
+import Cinemas from "./cinema";
 
 export default function AdminHome() {
   const [active, setActive] = useState("dashboard");
@@ -58,6 +59,11 @@ export default function AdminHome() {
       label: "Réservations",
       icon: <IconTicket className="h-5 w-5 rounded-4xl shrink-0" />,
     },
+    {
+      id: "cinema",
+      label: "Cinéma",
+      icon: <IconVideo className="h-5 w-5 rounded-4xl shrink-0" />,
+    },    
     {
       id: "settings",
       label: "Paramètres",
@@ -128,6 +134,7 @@ export default function AdminHome() {
         {active === "genre" && <Genre />}
         {active === "showtimes" && <Showtimes />}
         {active === "reservations" && <Reservations />}
+        {active === "cinema" && <Cinemas />}
         {active === "settings" && <Settings />}
         {active === "logout" && <Logout />}
       </main>

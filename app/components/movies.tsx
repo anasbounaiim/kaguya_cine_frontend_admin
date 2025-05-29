@@ -22,143 +22,255 @@ import {
 } from "../components/ui/dialog";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
-const allMovies = [
-    {
-      movie_id: 950387,
-      title: "A Minecraft Movie",
-      original_title: "A Minecraft Movie",
-      age_rating: "PG",
-      duration_min: 120,
-      release_date: "2025-03-31",
-      synopsis: "Four misfits find themselves struggling with ordinary problems when they are suddenly pulled through a mysterious portal into the Overworld: a bizarre, cubic wonderland that thrives on imagination. To get back home, they'll have to master this world while embarking on a magical quest with an unexpected, expert crafter, Steve.",
-      image: "https://image.tmdb.org/t/p/w500/yFHHfHcUgGAxziP1C3lLt0q2T4s.jpg",
-    },
-    {
-      movie_id: 447273,
-      title: "Snow White",
-      original_title: "Snow White",
-      age_rating: "PG",
-      duration_min: 120,
-      release_date: "2025-03-12",
-      synopsis: "Following the benevolent King's disappearance, the Evil Queen dominated the once fair land with a cruel streak. Princess Snow White flees the castle when the Queen, in her jealousy over Snow White's inner beauty, tries to kill her. Deep into the dark woods, she stumbles upon seven magical dwarves and a young bandit named Jonathan. Together, they strive to survive the Queen's relentless pursuit and aspire to take back the kingdom.",
-      image: "https://image.tmdb.org/t/p/w500/oLxWocqheC8XbXbxqJ3x422j9PW.jpg",
-    },
-    {
-      movie_id: 574475,
-      title: "Final Destination Bloodlines",
-      original_title: "Final Destination Bloodlines",
-      age_rating: "PG-13",
-      duration_min: 120,
-      release_date: "2025-05-09",
-      synopsis: "Plagued by a violent recurring nightmare, college student Stefanie heads home to track down the one person who might be able to break the cycle and save her family from the grisly demise that inevitably awaits them all.",
-      image: "https://image.tmdb.org/t/p/w500/6WxhEvFsauuACfv8HyoVX6mZKFj.jpg",
-    },
-    {
-      movie_id: 1197306,
-      title: "A Working Man",
-      original_title: "A Working Man",
-      age_rating: "R",
-      duration_min: 110,
-      release_date: "2025-03-26",
-      synopsis: "Levon Cade left behind a decorated military career in the black ops to live a simple life working construction. But when his boss's daughter, who is like family to him, is taken by human traffickers, his search to bring her home uncovers a world of corruption far greater than he ever could have imagined.",
-      image: "https://image.tmdb.org/t/p/w500/6FRFIogh3zFnVWn7Z6zcYnIbRcX.jpg",
-    },
-    {
-      movie_id: 1241436,
-      title: "Warfare",
-      original_title: "Warfare",
-      age_rating: "R",
-      duration_min: 115,
-      release_date: "2025-04-09",
-      synopsis: "A platoon of Navy SEALs embarks on a dangerous mission in Ramadi, Iraq, with the chaos and brotherhood of war retold through their memories of the event.",
-      image: "https://image.tmdb.org/t/p/w500/srj9rYrjefyWqkLc6l2xjTGeBGO.jpg",
-    },
-    {
-      movie_id: 575265,
-      title: "Mission: Impossible - The Final Reckoning",
-      original_title: "Mission: Impossible - The Final Reckoning",
-      age_rating: "PG-13",
-      duration_min: 130,
-      release_date: "2025-05-17",
-      synopsis: "Ethan Hunt and the IMF team continue their search for the terrifying AI known as the Entity — which has infiltrated intelligence networks all over the globe — with the world's governments and a mysterious ghost from Ethan's past on their trail. Joined by new allies and armed with the means to shut the Entity down for good, Hunt is in a race against time to prevent the world as we know it from changing forever.",
-      image: "https://image.tmdb.org/t/p/w500/z53D72EAOxGRqdr7KXXWp9dJiDe.jpg",
-    },
-    {
-      movie_id: 552524,
-      title: "Lilo & Stitch",
-      original_title: "Lilo & Stitch",
-      age_rating: "PG",
-      duration_min: 110,
-      release_date: "2025-05-17",
-      synopsis: "The wildly funny and touching story of a lonely Hawaiian girl and the fugitive alien who helps to mend her broken family.",
-      image: "https://image.tmdb.org/t/p/w500/tUae3mefrDVTgm5mRzqWnZK6fOP.jpg",
-    },
-    {
-      movie_id: 986056,
-      title: "Thunderbolts*",
-      original_title: "Thunderbolts*",
-      age_rating: "PG-13",
-      duration_min: 125,
-      release_date: "2025-04-30",
-      synopsis: "After finding themselves ensnared in a death trap, seven disillusioned castoffs must embark on a dangerous mission that will force them to confront the darkest corners of their pasts.",
-      image: "https://image.tmdb.org/t/p/w500/m9EtP1Yrzv6v7dMaC9mRaGhd1um.jpg",
-    },
-    {
-      movie_id: 822119,
-      title: "Captain America: Brave New World",
-      original_title: "Captain America: Brave New World",
-      age_rating: "PG-13",
-      duration_min: 130,
-      release_date: "2025-02-12",
-      synopsis: "After meeting with newly elected U.S. President Thaddeus Ross, Sam finds himself in the middle of an international incident. He must discover the reason behind a nefarious global plot before the true mastermind has the entire world seeing red.",
-      image: "https://image.tmdb.org/t/p/w500/pzIddUEMWhWzfvLI3TwxUG2wGoi.jpg",
-    }
-  ];
-
 
 const MOVIES_PER_PAGE = 5;
 
+const allMovies = [
+  {
+    movieId: 1,
+    title: "Final Destination",
+    originalTitle: "Final Destination Bloodlines",
+    releaseDate: "2025-01-01",
+    durationMin: 120,
+    synopsis: "A chilling tale of fate and survival.",
+    posterUrl: "http://example.com/poster1.jpg",
+    trailerUrl: "http://example.com/trailer1",
+    ageRating: "PG-13",
+    versions: [{ language: "EN", format: "IMAX" }],
+    genres: ["Action"],
+    private: true,
+  },
+  {
+    movieId: 2,
+    title: "Snowfall",
+    originalTitle: "Snowfall",
+    releaseDate: "2025-02-15",
+    durationMin: 115,
+    synopsis: "An emotional winter journey of discovery.",
+    posterUrl: "http://example.com/poster2.jpg",
+    trailerUrl: "http://example.com/trailer2",
+    ageRating: "PG",
+    versions: [{ language: "FR", format: "2D" }],
+    genres: ["Drama"],
+    private: false,
+  },
+  {
+    movieId: 3,
+    title: "Galactic War",
+    originalTitle: "Galactic War",
+    releaseDate: "2025-03-10",
+    durationMin: 130,
+    synopsis: "Epic space battles for universal peace.",
+    posterUrl: "http://example.com/poster3.jpg",
+    trailerUrl: "http://example.com/trailer3",
+    ageRating: "PG-13",
+    versions: [{ language: "EN", format: "3D" }],
+    genres: ["Sci-Fi", "Action"],
+    private: false,
+  },
+  {
+    movieId: 4,
+    title: "The Hidden Truth",
+    originalTitle: "The Hidden Truth",
+    releaseDate: "2025-04-05",
+    durationMin: 110,
+    synopsis: "A journalist uncovers a political conspiracy.",
+    posterUrl: "http://example.com/poster4.jpg",
+    trailerUrl: "http://example.com/trailer4",
+    ageRating: "R",
+    versions: [{ language: "EN", format: "2D" }],
+    genres: ["Thriller"],
+    private: true,
+  },
+  {
+    movieId: 5,
+    title: "Love Beyond",
+    originalTitle: "Love Beyond Time",
+    releaseDate: "2025-05-20",
+    durationMin: 105,
+    synopsis: "Two souls connected across centuries.",
+    posterUrl: "http://example.com/poster5.jpg",
+    trailerUrl: "http://example.com/trailer5",
+    ageRating: "PG",
+    versions: [{ language: "EN", format: "2D" }],
+    genres: ["Romance", "Fantasy"],
+    private: false,
+  },
+  {
+    movieId: 6,
+    title: "Cyber Strike",
+    originalTitle: "Cyber Strike",
+    releaseDate: "2025-06-01",
+    durationMin: 122,
+    synopsis: "Hackers battle for control of the digital world.",
+    posterUrl: "http://example.com/poster6.jpg",
+    trailerUrl: "http://example.com/trailer6",
+    ageRating: "PG-13",
+    versions: [{ language: "EN", format: "4DX" }],
+    genres: ["Action", "Tech"],
+    private: true,
+  },
+  {
+    movieId: 7,
+    title: "The Silent Hills",
+    originalTitle: "The Silent Hills",
+    releaseDate: "2025-07-07",
+    durationMin: 98,
+    synopsis: "A haunted village shrouded in fog.",
+    posterUrl: "http://example.com/poster7.jpg",
+    trailerUrl: "http://example.com/trailer7",
+    ageRating: "R",
+    versions: [{ language: "EN", format: "2D" }],
+    genres: ["Horror"],
+    private: true,
+  },
+  {
+    movieId: 8,
+    title: "The Artisan",
+    originalTitle: "The Artisan's Touch",
+    releaseDate: "2025-08-15",
+    durationMin: 112,
+    synopsis: "A sculptor battles self-doubt and finds love.",
+    posterUrl: "http://example.com/poster8.jpg",
+    trailerUrl: "http://example.com/trailer8",
+    ageRating: "PG",
+    versions: [{ language: "EN", format: "2D" }],
+    genres: ["Drama", "Romance"],
+    private: false,
+  },
+  {
+    movieId: 9,
+    title: "Savage Earth",
+    originalTitle: "Savage Earth",
+    releaseDate: "2025-09-12",
+    durationMin: 140,
+    synopsis: "A survival story in a world undone by nature.",
+    posterUrl: "http://example.com/poster9.jpg",
+    trailerUrl: "http://example.com/trailer9",
+    ageRating: "PG-13",
+    versions: [{ language: "EN", format: "IMAX" }],
+    genres: ["Adventure"],
+    private: false,
+  },
+  {
+    movieId: 10,
+    title: "Midnight Code",
+    originalTitle: "Midnight Code",
+    releaseDate: "2025-10-20",
+    durationMin: 108,
+    synopsis: "An underground coder takes down a megacorp.",
+    posterUrl: "http://example.com/poster10.jpg",
+    trailerUrl: "http://example.com/trailer10",
+    ageRating: "R",
+    versions: [{ language: "EN", format: "2D" }],
+    genres: ["Thriller", "Tech"],
+    private: true,
+  },
+  {
+    movieId: 11,
+    title: "Echoes",
+    originalTitle: "Echoes of the Past",
+    releaseDate: "2025-11-05",
+    durationMin: 100,
+    synopsis: "Revisiting memories reveals dark family secrets.",
+    posterUrl: "http://example.com/poster11.jpg",
+    trailerUrl: "http://example.com/trailer11",
+    ageRating: "PG",
+    versions: [{ language: "EN", format: "2D" }],
+    genres: ["Drama"],
+    private: false,
+  },
+  {
+    movieId: 12,
+    title: "Quantum Rift",
+    originalTitle: "Quantum Rift",
+    releaseDate: "2025-12-12",
+    durationMin: 125,
+    synopsis: "Scientists race to prevent reality from collapsing.",
+    posterUrl: "http://example.com/poster12.jpg",
+    trailerUrl: "http://example.com/trailer12",
+    ageRating: "PG-13",
+    versions: [{ language: "EN", format: "3D" }],
+    genres: ["Sci-Fi"],
+    private: true,
+  },
+  {
+    movieId: 13,
+    title: "The Orchestra",
+    originalTitle: "The Orchestra",
+    releaseDate: "2025-12-25",
+    durationMin: 90,
+    synopsis: "A conductor unites a broken ensemble for one last performance.",
+    posterUrl: "http://example.com/poster13.jpg",
+    trailerUrl: "http://example.com/trailer13",
+    ageRating: "PG",
+    versions: [{ language: "EN", format: "2D" }],
+    genres: ["Drama", "Music"],
+    private: false,
+  },
+  {
+    movieId: 14,
+    title: "Infinite Loop",
+    originalTitle: "Infinite Loop",
+    releaseDate: "2026-01-10",
+    durationMin: 118,
+    synopsis: "A developer trapped in repeating time loops.",
+    posterUrl: "http://example.com/poster14.jpg",
+    trailerUrl: "http://example.com/trailer14",
+    ageRating: "PG-13",
+    versions: [{ language: "EN", format: "4DX" }],
+    genres: ["Sci-Fi", "Thriller"],
+    private: true,
+  },
+  {
+    movieId: 15,
+    title: "Legends Reborn",
+    originalTitle: "Legends Reborn",
+    releaseDate: "2026-02-20",
+    durationMin: 135,
+    synopsis: "Ancient heroes return to protect the modern world.",
+    posterUrl: "http://example.com/poster15.jpg",
+    trailerUrl: "http://example.com/trailer15",
+    ageRating: "PG-13",
+    versions: [{ language: "EN", format: "IMAX" }],
+    genres: ["Fantasy", "Action"],
+    private: false,
+  }
+];
+
+
 const Movies = () => {
-  const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
   const [movies, setMovies] = useState(allMovies);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [movieToDelete, setMovieToDelete] = useState<number | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
+  const totalPages = Math.ceil(movies.length / MOVIES_PER_PAGE);
   const indexOfLast = currentPage * MOVIES_PER_PAGE;
   const indexOfFirst = indexOfLast - MOVIES_PER_PAGE;
   const currentMovies = movies.slice(indexOfFirst, indexOfLast);
-  const totalPages = Math.ceil(movies.length / MOVIES_PER_PAGE);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 1000);
-    return () => clearTimeout(timer);
-  }, []);
-
-  const confirmDeleteMovie = () => {
-    if (movieToDelete !== null) {
-      setMovies((prev) => prev.filter((movie) => movie.movie_id !== movieToDelete));
-      setMovieToDelete(null);
-    }
-  };
-
-  const handleEdit = (id: number) => {
-    alert(`Edit movie with ID ${id}`);
-  };
 
   const handleAddMovie = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget;
     const formData = new FormData(form);
     const newMovie = {
-      movie_id: movies.length + 1,
+      movieId: movies.length + 1,
       title: formData.get("title") as string,
-      original_title: formData.get("original_title") as string,
-      age_rating: formData.get("age_rating") as string,
-      duration_min: Number(formData.get("duration_min")),
-      release_date: formData.get("release_date") as string,
+      originalTitle: formData.get("originalTitle") as string,
+      releaseDate: formData.get("releaseDate") as string,
+      durationMin: Number(formData.get("durationMin")),
       synopsis: formData.get("synopsis") as string,
-      image: formData.get("image") as string,
+      posterUrl: formData.get("posterUrl") as string,
+      trailerUrl: formData.get("trailerUrl") as string,
+      ageRating: formData.get("ageRating") as string,
+      versions: [
+        {
+          language: formData.get("language") as string,
+          format: formData.get("format") as string,
+        },
+      ],
+      genres: [formData.get("genre") as string],
+      private: formData.get("private") === "on",
     };
     setMovies((prev) => [...prev, newMovie]);
     setIsModalOpen(false);
@@ -181,38 +293,20 @@ const Movies = () => {
               <DialogTitle>Add New Movie</DialogTitle>
             </DialogHeader>
             <form onSubmit={handleAddMovie} className="space-y-4">
-              <div>
-                <Label htmlFor="title">Title</Label>
-                <Input name="title" id="title" required />
-              </div>
-              <div>
-                <Label htmlFor="original_title">Original Title</Label>
-                <Input name="original_title" id="original_title" required />
-              </div>
-              <div>
-                <Label htmlFor="age_rating">Age Rating</Label>
-                <Input name="age_rating" id="age_rating" required />
-              </div>
-              <div>
-                <Label htmlFor="duration_min">Duration (minutes)</Label>
-                <Input type="number" name="duration_min" id="duration_min" required />
-              </div>
-              <div>
-                <Label htmlFor="release_date">Release Date</Label>
-                <Input type="date" name="release_date" id="release_date" required />
-              </div>
-              <div>
-                <Label htmlFor="synopsis">Synopsis</Label>
-                <Input name="synopsis" id="synopsis" required />
-              </div>
-              <div>
-                <Label htmlFor="image">Image URL</Label>
-                <Input name="image" id="image" required />
-              </div>
+              <div><Label htmlFor="title">Title</Label><Input name="title" id="title" required /></div>
+              <div><Label htmlFor="originalTitle">Original Title</Label><Input name="originalTitle" id="originalTitle" required /></div>
+              <div><Label htmlFor="releaseDate">Release Date</Label><Input type="date" name="releaseDate" id="releaseDate" required /></div>
+              <div><Label htmlFor="durationMin">Duration (min)</Label><Input type="number" name="durationMin" id="durationMin" required /></div>
+              <div><Label htmlFor="synopsis">Synopsis</Label><Input name="synopsis" id="synopsis" required /></div>
+              <div><Label htmlFor="posterUrl">Poster URL</Label><Input name="posterUrl" id="posterUrl" required /></div>
+              <div><Label htmlFor="trailerUrl">Trailer URL</Label><Input name="trailerUrl" id="trailerUrl" required /></div>
+              <div><Label htmlFor="ageRating">Age Rating</Label><Input name="ageRating" id="ageRating" required /></div>
+              <div><Label htmlFor="language">Version Language</Label><Input name="language" id="language" required /></div>
+              <div><Label htmlFor="format">Version Format</Label><Input name="format" id="format" required /></div>
+              <div><Label htmlFor="genre">Genre</Label><Input name="genre" id="genre" required /></div>
+              <div><Label htmlFor="private">Private</Label><Input type="checkbox" name="private" id="private" /></div>
               <div className="flex justify-end gap-2 pt-4">
-                <DialogClose asChild>
-                  <Button type="button" variant="outline">Cancel</Button>
-                </DialogClose>
+                <DialogClose asChild><Button type="button" variant="outline">Cancel</Button></DialogClose>
                 <Button type="submit">Save</Button>
               </div>
             </form>
@@ -234,74 +328,40 @@ const Movies = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {loading
-              ? Array.from({ length: MOVIES_PER_PAGE }).map((_, idx) => (
-                  <TableRow key={idx} className="animate-pulse">
-                    <TableCell><div className="h-16 w-12 bg-gray-200 dark:bg-neutral-700 rounded" /></TableCell>
-                    <TableCell><div className="h-4 w-48 bg-gray-200 dark:bg-neutral-700 rounded" /></TableCell>
-                    <TableCell><div className="h-4 w-12 bg-gray-200 dark:bg-neutral-700 rounded" /></TableCell>
-                    <TableCell><div className="h-4 w-12 bg-gray-200 dark:bg-neutral-700 rounded" /></TableCell>
-                    <TableCell><div className="h-4 w-64 bg-gray-200 dark:bg-neutral-700 rounded" /></TableCell>
-                    <TableCell className="text-right"><div className="h-4 w-20 ml-auto bg-gray-200 dark:bg-neutral-700 rounded" /></TableCell>
-                  </TableRow>
-                ))
-              : currentMovies.map((movie) => (
-                  <TableRow key={movie.movie_id}>
-                    <TableCell>
-                      <img src={movie.image} alt={movie.title} className="w-12 h-16 object-cover rounded" />
-                    </TableCell>
-                    <TableCell>{movie.title}</TableCell>
-                    <TableCell>
-                      <span className={`inline-block px-2 py-1 text-xs font-semibold rounded-full ${movie.age_rating === "PG" ? "bg-blue-100 text-blue-800" : movie.age_rating === "PG-13" ? "bg-yellow-100 text-yellow-800" : "bg-gray-100 text-gray-800"}`}>
-                        {movie.age_rating}
-                      </span>
-                    </TableCell>
-                    <TableCell>{movie.duration_min} min</TableCell>
-                    <TableCell className="max-w-xs text-sm text-muted-foreground">
-                      <span className="whitespace-normal break-words">{movie.synopsis}</span>
-                    </TableCell>
-                    <TableCell className="text-right flex justify-end gap-2">
-                      <Button size="sm" variant="ghost" onClick={() => handleEdit(movie.movie_id)}>
-                        <Pencil className="w-4 h-4 mr-1" /> Edit
-                      </Button>
-                      <Dialog open={movieToDelete === movie.movie_id} onOpenChange={(open) => setMovieToDelete(open ? movie.movie_id : null)}>
-                        <DialogTrigger asChild>
-                          <Button size="sm" variant="ghost">
-                            <Trash2 className="w-4 h-4 mr-1 text-red-600" /> Delete
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent>
-                          <DialogHeader>
-                            <DialogTitle>Confirm Deletion</DialogTitle>
-                          </DialogHeader>
-                          <div className="py-4">Are you sure you want to delete "{movie.title}"?</div>
-                          <div className="flex justify-end gap-2">
-                            <DialogClose asChild>
-                              <Button variant="outline">Cancel</Button>
-                            </DialogClose>
-                            <DialogClose asChild>
-                              <Button variant="destructive" onClick={confirmDeleteMovie}>Delete</Button>
-                            </DialogClose>
-                          </div>
-                        </DialogContent>
-                      </Dialog>
-                    </TableCell>
-                  </TableRow>
-                ))}
+            {currentMovies.map((movie) => (
+              <TableRow key={movie.movieId}>
+                <TableCell><img src={movie.posterUrl} alt={movie.title} className="w-12 h-16 object-cover rounded" /></TableCell>
+                <TableCell>{movie.title}</TableCell>
+                <TableCell>
+                  <span className={`inline-block px-2 py-1 text-xs font-semibold rounded-full ${movie.ageRating === "PG" ? "bg-blue-100 text-blue-800" : movie.ageRating === "PG-13" ? "bg-yellow-100 text-yellow-800" : "bg-gray-100 text-gray-800"}`}>
+                    {movie.ageRating}
+                  </span>
+                </TableCell>
+                <TableCell>{movie.durationMin} min</TableCell>
+                <TableCell className="max-w-xs text-sm text-muted-foreground">
+                  <span className="whitespace-normal break-words">{movie.synopsis}</span>
+                </TableCell>
+                <TableCell className="text-right flex justify-end gap-2">
+                  <Button size="sm" variant="ghost">
+                    <Pencil className="w-4 h-4 mr-1" /> Edit
+                  </Button>
+                  <Button size="sm" variant="ghost">
+                    <Trash2 className="w-4 h-4 mr-1 text-red-600" /> Delete
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
-
-        {!loading && (
-          <div className="mt-6 flex justify-end gap-2">
-            <Button variant="outline" onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))} disabled={currentPage === 1}>
-              Previous
-            </Button>
-            <span className="px-2 text-sm text-muted-foreground">Page {currentPage} of {totalPages}</span>
-            <Button variant="outline" onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))} disabled={currentPage === totalPages}>
-              Next
-            </Button>
-          </div>
-        )}
+        <div className="mt-4 flex justify-end gap-2">
+          <Button disabled={currentPage === 1} onClick={() => setCurrentPage((prev) => prev - 1)}>
+            Previous
+          </Button>
+          <span className="self-center">Page {currentPage} of {totalPages}</span>
+          <Button disabled={currentPage === totalPages} onClick={() => setCurrentPage((prev) => prev + 1)}>
+            Next
+          </Button>
+        </div>
       </div>
     </div>
   );
