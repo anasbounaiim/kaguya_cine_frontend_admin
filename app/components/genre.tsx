@@ -1,0 +1,175 @@
+"use client";
+
+import React, { useEffect, useState } from "react";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Button } from "../components/ui/button";
+import { Pencil, Trash2, Plus } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogClose,
+} from "../components/ui/dialog";
+import { Input } from "../components/ui/input";
+import { Label } from "../components/ui/label";
+
+const initialGenres = [
+  { id: 1, name: "Action" },
+  { id: 2, name: "Comedy" },
+  { id: 3, name: "Drama" },
+  { id: 4, name: "Horror" },
+  { id: 5, name: "Science Fiction" },
+];
+
+const Genres = () => {
+  const [genres, setGenres] = useState(initialGenres);
+  const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [genreToDelete, setGenreToDelete] = useState<number | null>(null);
+  const [editingGenre, setEditingGenre] = useState<{ id: number; name: string } | null>(null);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 1000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleAddOrEditGenre = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+    const name = formData.get("name") as string;
+
+    if (editingGenre) {
+      setGenres((prev) =>
+        prev.map((g) => (g.id === editingGenre.id ? { ...g, name } : g))
+      );
+    } else {
+      const newGenre = {
+        id: genres.length + 1,
+        name,
+      };
+      setGenres((prev) => [...prev, newGenre]);
+    }
+
+    setIsModalOpen(false);
+    setEditingGenre(null);
+    form.reset();
+  };
+
+  const handleEdit = (genre: { id: number; name: string }) => {
+    setEditingGenre(genre);
+    setIsModalOpen(true);
+  };
+
+  const confirmDeleteGenre = () => {
+    if (genreToDelete !== null) {
+      setGenres((prev) => prev.filter((genre) => genre.id !== genreToDelete));
+      setGenreToDelete(null);
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-3xl font-bold">Genres</h1>
+        <Dialog open={isModalOpen} onOpenChange={(open) => { setIsModalOpen(open); if (!open) setEditingGenre(null); }}>
+          <DialogTrigger asChild>
+            <Button>
+              <Plus className="mr-2 h-4 w-4" />
+              {editingGenre ? "Edit Genre" : "Add Genre"}
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>{editingGenre ? "Edit Genre" : "Add New Genre"}</DialogTitle>
+            </DialogHeader>
+            <form onSubmit={handleAddOrEditGenre} className="space-y-4">
+              <div>
+                <Label htmlFor="name">Genre Name</Label>
+                <Input
+                  name="name"
+                  id="name"
+                  required
+                  defaultValue={editingGenre ? editingGenre.name : ""}
+                />
+              </div>
+              <div className="flex justify-end gap-2 pt-4">
+                <DialogClose asChild>
+                  <Button type="button" variant="outline">Cancel</Button>
+                </DialogClose>
+                <Button type="submit">Save</Button>
+              </div>
+            </form>
+          </DialogContent>
+        </Dialog>
+      </div>
+
+      <div className="rounded-xl border border-neutral-200 dark:border-neutral-700 p-4 md:p-8 bg-white dark:bg-neutral-900">
+        <Table>
+          <TableCaption className="text-neutral-500">List of genres in the system.</TableCaption>
+          <TableHeader>
+            <TableRow>
+              <TableHead>ID</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {loading
+              ? Array.from({ length: 5 }).map((_, idx) => (
+                  <TableRow key={idx} className="animate-pulse">
+                    <TableCell><div className="h-4 w-8 bg-gray-200 dark:bg-neutral-700 rounded" /></TableCell>
+                    <TableCell><div className="h-4 w-48 bg-gray-200 dark:bg-neutral-700 rounded" /></TableCell>
+                    <TableCell className="text-right"><div className="h-4 w-20 ml-auto bg-gray-200 dark:bg-neutral-700 rounded" /></TableCell>
+                  </TableRow>
+                ))
+              : genres.map((genre) => (
+                  <TableRow key={genre.id}>
+                    <TableCell>{genre.id}</TableCell>
+                    <TableCell>{genre.name}</TableCell>
+                    <TableCell className="text-right flex justify-end gap-2">
+                      <Button size="sm" variant="ghost" onClick={() => handleEdit(genre)}>
+                        <Pencil className="w-4 h-4 mr-1" /> Edit
+                      </Button>
+                      <Dialog open={genreToDelete === genre.id} onOpenChange={(open) => setGenreToDelete(open ? genre.id : null)}>
+                        <DialogTrigger asChild>
+                          <Button size="sm" variant="ghost">
+                            <Trash2 className="w-4 h-4 mr-1 text-red-600" /> Delete
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent>
+                          <DialogHeader>
+                            <DialogTitle>Confirm Deletion</DialogTitle>
+                          </DialogHeader>
+                          <div className="py-4">Are you sure you want to delete "{genre.name}"?</div>
+                          <div className="flex justify-end gap-2">
+                            <DialogClose asChild>
+                              <Button variant="outline">Cancel</Button>
+                            </DialogClose>
+                            <DialogClose asChild>
+                              <Button variant="destructive" onClick={confirmDeleteGenre}>Delete</Button>
+                            </DialogClose>
+                          </div>
+                        </DialogContent>
+                      </Dialog>
+                    </TableCell>
+                  </TableRow>
+                ))}
+          </TableBody>
+        </Table>
+      </div>
+    </div>
+  );
+};
+
+export default Genres;

@@ -8,6 +8,9 @@ import {
   IconUserBolt,
   IconVideo,
   IconLogout,
+  IconCategory,
+  IconClock,
+  IconTicket,
 } from "@tabler/icons-react";
 import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
@@ -16,7 +19,10 @@ import Users from "./users";
 import Movies from "./movies";
 import Settings from "./settings";
 import Logout from "./logout";
+import Genre from "./genre";
 import Image from "next/image";
+import Showtimes from "./showtime";
+import Reservations from "./reservation";
 
 export default function AdminHome() {
   const [active, setActive] = useState("dashboard");
@@ -36,6 +42,21 @@ export default function AdminHome() {
       id: "movies",
       label: "Films",
       icon: <IconVideo className="h-5 w-5 rounded-4xl shrink-0" />,
+    },
+    {
+      id: "genre",
+      label: "Genres",
+      icon: <IconCategory className="h-5 w-5 rounded-4xl shrink-0" />,
+    },
+    {
+      id: "showtimes",
+      label: "Séances",
+      icon: <IconClock className="h-5 w-5 rounded-4xl shrink-0" />,
+    },
+    {
+      id: "reservations",
+      label: "Réservations",
+      icon: <IconTicket className="h-5 w-5 rounded-4xl shrink-0" />,
     },
     {
       id: "settings",
@@ -102,8 +123,11 @@ export default function AdminHome() {
 
       <main className="flex-1 p-6 overflow-auto bg-white dark:bg-neutral-800">
         {active === "dashboard" && <Dashboard />}
-        {active === "users" && <Users/>}
-        {active === "movies" && <Movies/>}
+        {active === "users" && <Users />}
+        {active === "movies" && <Movies />}
+        {active === "genre" && <Genre />}
+        {active === "showtimes" && <Showtimes />}
+        {active === "reservations" && <Reservations />}
         {active === "settings" && <Settings />}
         {active === "logout" && <Logout />}
       </main>
@@ -136,4 +160,3 @@ const LogoIcon = () => (
     <div className="h-5 w-6 shrink-0 rounded-tl-lg rounded-tr-sm rounded-br-lg rounded-bl-sm bg-black dark:bg-white" />
   </a>
 );
-
