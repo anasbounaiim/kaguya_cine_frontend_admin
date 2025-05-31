@@ -12,6 +12,7 @@ import {
   IconClock,
   IconTicket,
 } from "@tabler/icons-react";
+import { IconCreditCard } from "@tabler/icons-react";
 import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 import Dashboard from "./dashboard";
@@ -24,6 +25,7 @@ import Image from "next/image";
 import Showtimes from "./showtime";
 import Reservations from "./reservation";
 import Cinemas from "./cinema";
+import Payments from "./payment";
 
 export default function AdminHome() {
   const [active, setActive] = useState("dashboard");
@@ -63,6 +65,11 @@ export default function AdminHome() {
       id: "cinema",
       label: "Cinéma",
       icon: <IconVideo className="h-5 w-5 rounded-4xl shrink-0" />,
+    },
+    {
+      id: "payments",
+      label: "Paiements",
+      icon: <IconCreditCard className="h-5 w-5 rounded-4xl shrink-0" />,
     },    
     {
       id: "settings",
@@ -135,6 +142,7 @@ export default function AdminHome() {
         {active === "showtimes" && <Showtimes />}
         {active === "reservations" && <Reservations />}
         {active === "cinema" && <Cinemas />}
+        {active === "payments" && <Payments />}
         {active === "settings" && <Settings />}
         {active === "logout" && <Logout />}
       </main>

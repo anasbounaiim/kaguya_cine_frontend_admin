@@ -48,6 +48,7 @@ export default function Reservations() {
   const [reservations, setReservations] = useState(initialReservations);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [reservationToDelete, setReservationToDelete] = useState<number | null>(null);
+  const [search, setSearch] = useState(""); // <-- Add search state
 
   const handleAddReservation = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -79,6 +80,17 @@ export default function Reservations() {
   const handleEdit = (id: number) => {
     alert(`Edit reservation with ID ${id}`);
   };
+
+  // FILTER LOGIC
+  const filteredReservations = reservations.filter((r) => {
+    const s = search.toLowerCase();
+    return (
+      r.name.toLowerCase().includes(s) ||
+      r.email.toLowerCase().includes(s) ||
+      r.showtime.toLowerCase().includes(s) ||
+      r.status.toLowerCase().includes(s)
+    );
+  });
 
   return (
     <div className="space-y-6">
@@ -123,6 +135,17 @@ export default function Reservations() {
         </Dialog>
       </div>
 
+      {/* Search input */}
+      <div className="mb-4">
+        <Input
+          type="text"
+          placeholder="Search reservations… (by name, email, status, showtime)"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-72"
+        />
+      </div>
+
       <div className="rounded-xl border border-neutral-200 dark:border-neutral-700 p-4 md:p-8 bg-white dark:bg-neutral-900">
         <Table>
           <TableCaption className="text-neutral-500">List of reservations.</TableCaption>
@@ -139,7 +162,7 @@ export default function Reservations() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {reservations.map((reservation) => (
+            {filteredReservations.map((reservation) => (
               <TableRow key={reservation.id}>
                 <TableCell>{reservation.id}</TableCell>
                 <TableCell>{reservation.name}</TableCell>
