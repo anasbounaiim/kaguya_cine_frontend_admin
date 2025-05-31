@@ -1,18 +1,20 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import { Sidebar, SidebarBody, SidebarLink } from "./ui/sidebar";
 import {
   IconBrandTabler,
   IconSettings,
   IconUserBolt,
   IconVideo,
-  IconLogout,
   IconCategory,
   IconClock,
   IconTicket,
+  IconCreditCard,
+  IconLogout,
+  IconUser,
 } from "@tabler/icons-react";
-import { IconCreditCard } from "@tabler/icons-react";
 import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 import Dashboard from "./dashboard";
@@ -26,10 +28,18 @@ import Showtimes from "./showtime";
 import Reservations from "./reservation";
 import Cinemas from "./cinema";
 import Payments from "./payment";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu";
 
 export default function AdminHome() {
   const [active, setActive] = useState("dashboard");
+  const [open, setOpen] = useState(true);
 
+  // Sidebar links (no logout)
   const links = [
     {
       id: "dashboard",
@@ -70,20 +80,19 @@ export default function AdminHome() {
       id: "payments",
       label: "Paiements",
       icon: <IconCreditCard className="h-5 w-5 rounded-4xl shrink-0" />,
-    },    
+    },
     {
       id: "settings",
       label: "Paramètres",
       icon: <IconSettings className="h-5 w-5 rounded-4xl shrink-0" />,
     },
-    {
-      id: "logout",
-      label: "Déconnexion",
-      icon: <IconLogout className="h-5 w-5 rounded-4xl shrink-0" />,
-    },
   ];
 
-  const [open, setOpen] = useState(true);
+  // Optionally: Implement real logout logic here
+  function handleLogout() {
+    setActive("logout");
+    // You can add your signOut logic, clear tokens, etc.
+  }
 
   return (
     <div
@@ -93,13 +102,14 @@ export default function AdminHome() {
       )}
     >
       <Sidebar open={open} setOpen={setOpen}>
-        <SidebarBody className="justify-between gap-10">
+        <SidebarBody className="flex flex-col h-full justify-between gap-2">
+          {/* Top Section */}
           <div className="flex flex-1 flex-col overflow-x-hidden overflow-y-auto">
             {open ? <Logo /> : <LogoIcon />}
             <div className="mt-8 flex flex-col gap-2">
-              {links.map((link, idx) => (
+              {links.map((link) => (
                 <SidebarLink
-                  key={idx}
+                  key={link.id}
                   link={{
                     label: link.label,
                     href: "#",
@@ -107,33 +117,58 @@ export default function AdminHome() {
                   }}
                   className={cn(
                     "text-sm font-medium",
-                    active === link.id ? "bg-red-600 p-2  rounded-full text-white" : "p-2"
+                    active === link.id
+                      ? "bg-red-600 p-2 rounded-full text-white"
+                      : "p-2"
                   )}
                   onClick={() => setActive(link.id)}
                 />
               ))}
             </div>
           </div>
-          <div>
-            <SidebarLink
-              link={{
-                label: "Manu Arora",
-                href: "#",
-                icon: (
+
+          {/* Bottom Section: Profile Dropdown */}
+          <div className="mb-4 flex flex-col items-start">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  className="flex items-center gap-2 cursor-pointer hover:bg-neutral-200 dark:hover:bg-neutral-700 rounded-full p-2 transition"
+                  tabIndex={0}
+                >
                   <Image
                     src="https://assets.aceternity.com/manu.png"
                     className="h-7 w-7 shrink-0 rounded-full"
                     alt="Avatar"
-                    width={7}
-                    height={7}
+                    width={28}
+                    height={28}
                   />
-                ),
-              }}
-            />
+                  <span className="text-sm font-medium text-neutral-900 dark:text-white">Manu Arora</span>
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="end"
+                className="w-48 bg-white dark:bg-neutral-800 shadow-xl rounded-xl border border-neutral-200 dark:border-neutral-700"
+              >
+                <DropdownMenuItem asChild className="flex gap-2 items-center text-neutral-900 dark:text-white focus:bg-neutral-100 dark:focus:bg-neutral-700">
+                  <Link href="/profile">
+                    <IconUser className="h-4 w-4 mr-2" />
+                    Profil
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="flex gap-2 items-center text-red-600 focus:bg-red-100 dark:focus:bg-red-900"
+                  onClick={handleLogout}
+                >
+                  <IconLogout className="h-4 w-4 mr-2" />
+                  Déconnexion
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </SidebarBody>
       </Sidebar>
 
+      {/* Main content area */}
       <main className="flex-1 p-6 overflow-auto bg-white dark:bg-neutral-800">
         {active === "dashboard" && <Dashboard />}
         {active === "users" && <Users />}
@@ -145,6 +180,7 @@ export default function AdminHome() {
         {active === "payments" && <Payments />}
         {active === "settings" && <Settings />}
         {active === "logout" && <Logout />}
+        {/* Remove profile render here; /profile is a separate page */}
       </main>
     </div>
   );
