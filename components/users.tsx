@@ -10,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "../components/ui/button";
+import { Button } from "./ui/button";
 import { Pencil, Trash2, Plus } from "lucide-react";
 import {
   Dialog,
@@ -19,9 +19,9 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogClose,
-} from "../components/ui/dialog";
-import { Input } from "../components/ui/input";
-import { Label } from "../components/ui/label";
+} from "./ui/dialog";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
 
 const allUsers = [
   { id: 1, email: "acevedodonald@myers-blair.com", firstName: "Pamela", lastName: "Lee", role: "ADMIN" },
