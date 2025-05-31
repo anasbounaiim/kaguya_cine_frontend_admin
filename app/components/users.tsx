@@ -47,19 +47,36 @@ const Users = () => {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [users, setUsers] = useState(allUsers);
+  const [search, setSearch] = useState(""); // <--- NEW: search state
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<any>(null);
   const [confirmDelete, setConfirmDelete] = useState<{ id: number | null }>({ id: null });
 
+  // Filter logic
+  const filteredUsers = users.filter((user) => {
+    const q = search.toLowerCase();
+    return (
+      user.firstName.toLowerCase().includes(q) ||
+      user.lastName.toLowerCase().includes(q) ||
+      user.email.toLowerCase().includes(q)
+    );
+  });
+
+  // Pagination logic applies to filtered users
   const indexOfLast = currentPage * USERS_PER_PAGE;
   const indexOfFirst = indexOfLast - USERS_PER_PAGE;
-  const currentUsers = users.slice(indexOfFirst, indexOfLast);
-  const totalPages = Math.ceil(users.length / USERS_PER_PAGE);
+  const currentUsers = filteredUsers.slice(indexOfFirst, indexOfLast);
+  const totalPages = Math.ceil(filteredUsers.length / USERS_PER_PAGE);
 
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 1200);
     return () => clearTimeout(timer);
   }, []);
+
+  // Reset to page 1 when search changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search]);
 
   const handleDelete = () => {
     if (confirmDelete.id !== null) {
@@ -126,6 +143,20 @@ const Users = () => {
             </form>
           </DialogContent>
         </Dialog>
+      </div>
+
+      {/* --- SEARCH BAR --- */}
+      <div className="mb-4 flex justify-between items-center">
+        <Input
+          type="text"
+          placeholder="Search by name or email…"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-80"
+        />
+        <span className="text-neutral-500 text-sm">
+          {filteredUsers.length} user{filteredUsers.length !== 1 ? "s" : ""}
+        </span>
       </div>
 
       <Dialog open={confirmDelete.id !== null} onOpenChange={(open) => !open && setConfirmDelete({ id: null })}>

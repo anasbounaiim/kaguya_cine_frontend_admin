@@ -243,11 +243,28 @@ const Movies = () => {
   const [movies, setMovies] = useState(allMovies);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [search, setSearch] = useState(""); // <-- NEW
 
-  const totalPages = Math.ceil(movies.length / MOVIES_PER_PAGE);
+  // Filter logic: by title, originalTitle, genre, synopsis
+  const filteredMovies = movies.filter((movie) => {
+    const q = search.toLowerCase();
+    return (
+      movie.title.toLowerCase().includes(q) ||
+      movie.originalTitle.toLowerCase().includes(q) ||
+      movie.synopsis.toLowerCase().includes(q) ||
+      movie.genres.join(" ").toLowerCase().includes(q)
+    );
+  });
+
+  const totalPages = Math.ceil(filteredMovies.length / MOVIES_PER_PAGE);
   const indexOfLast = currentPage * MOVIES_PER_PAGE;
   const indexOfFirst = indexOfLast - MOVIES_PER_PAGE;
-  const currentMovies = movies.slice(indexOfFirst, indexOfLast);
+  const currentMovies = filteredMovies.slice(indexOfFirst, indexOfLast);
+
+  // Reset to page 1 when search changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search]);
 
   const handleAddMovie = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -314,6 +331,20 @@ const Movies = () => {
         </Dialog>
       </div>
 
+      {/* --- SEARCH BAR --- */}
+      <div className="mb-4 flex justify-between items-center">
+        <Input
+          type="text"
+          placeholder="Search by title, genre, or synopsis…"
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          className="w-80"
+        />
+        <span className="text-neutral-500 text-sm">
+          {filteredMovies.length} movie{filteredMovies.length !== 1 ? "s" : ""}
+        </span>
+      </div>
+
       <div className="rounded-xl border border-neutral-200 dark:border-neutral-700 p-4 md:p-8 bg-white dark:bg-neutral-900">
         <Table>
           <TableCaption className="text-neutral-500">List of movies in the system.</TableCaption>
@@ -330,10 +361,18 @@ const Movies = () => {
           <TableBody>
             {currentMovies.map((movie) => (
               <TableRow key={movie.movieId}>
-                <TableCell><img src={movie.posterUrl} alt={movie.title} className="w-12 h-16 object-cover rounded" /></TableCell>
+                <TableCell>
+                  <img src={movie.posterUrl} alt={movie.title} className="w-12 h-16 object-cover rounded" />
+                </TableCell>
                 <TableCell>{movie.title}</TableCell>
                 <TableCell>
-                  <span className={`inline-block px-2 py-1 text-xs font-semibold rounded-full ${movie.ageRating === "PG" ? "bg-blue-100 text-blue-800" : movie.ageRating === "PG-13" ? "bg-yellow-100 text-yellow-800" : "bg-gray-100 text-gray-800"}`}>
+                  <span className={`inline-block px-2 py-1 text-xs font-semibold rounded-full ${
+                    movie.ageRating === "PG"
+                      ? "bg-blue-100 text-blue-800"
+                      : movie.ageRating === "PG-13"
+                      ? "bg-yellow-100 text-yellow-800"
+                      : "bg-gray-100 text-gray-800"
+                  }`}>
                     {movie.ageRating}
                   </span>
                 </TableCell>

@@ -37,6 +37,7 @@ const Genres = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [genreToDelete, setGenreToDelete] = useState<number | null>(null);
   const [editingGenre, setEditingGenre] = useState<{ id: number; name: string } | null>(null);
+  const [search, setSearch] = useState(""); // <-- NEW
 
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 1000);
@@ -78,6 +79,11 @@ const Genres = () => {
     }
   };
 
+  // FILTER GENRES BASED ON SEARCH
+  const filteredGenres = genres.filter((genre) =>
+    genre.name.toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -114,6 +120,17 @@ const Genres = () => {
         </Dialog>
       </div>
 
+      {/* --- SEARCH BAR --- */}
+      <div className="mb-4">
+        <Input
+          type="text"
+          placeholder="Search genres…"
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          className="w-64"
+        />
+      </div>
+
       <div className="rounded-xl border border-neutral-200 dark:border-neutral-700 p-4 md:p-8 bg-white dark:bg-neutral-900">
         <Table>
           <TableCaption className="text-neutral-500">List of genres in the system.</TableCaption>
@@ -133,7 +150,7 @@ const Genres = () => {
                     <TableCell className="text-right"><div className="h-4 w-20 ml-auto bg-gray-200 dark:bg-neutral-700 rounded" /></TableCell>
                   </TableRow>
                 ))
-              : genres.map((genre) => (
+              : filteredGenres.map((genre) => (
                   <TableRow key={genre.id}>
                     <TableCell>{genre.id}</TableCell>
                     <TableCell>{genre.name}</TableCell>

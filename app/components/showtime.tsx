@@ -59,6 +59,7 @@ const Showtimes = () => {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showtimeToDelete, setShowtimeToDelete] = useState<number | null>(null);
+  const [search, setSearch] = useState(""); // NEW
 
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 1000);
@@ -94,6 +95,17 @@ const Showtimes = () => {
       setShowtimeToDelete(null);
     }
   };
+
+  // SEARCH/FILTER LOGIC
+  const filteredShowtimes = showtimes.filter((st) => {
+    const searchLower = search.toLowerCase();
+    return (
+      st.theater.name.toLowerCase().includes(searchLower) ||
+      st.theater.techFormat.toLowerCase().includes(searchLower) ||
+      st.showtimeId.toString().includes(searchLower) ||
+      st.versionId.toString().includes(searchLower)
+    );
+  });
 
   return (
     <div className="space-y-6">
@@ -141,6 +153,17 @@ const Showtimes = () => {
         </Dialog>
       </div>
 
+      {/* Search Bar */}
+      <div className="mb-4">
+        <Input
+          type="text"
+          placeholder="Search showtimes… (by theater, format, ID)"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-72"
+        />
+      </div>
+
       <div className="rounded-xl border border-neutral-200 dark:border-neutral-700 p-4 md:p-8 bg-white dark:bg-neutral-900">
         <Table>
           <TableCaption className="text-neutral-500">List of showtimes in the system.</TableCaption>
@@ -168,7 +191,7 @@ const Showtimes = () => {
                     <TableCell className="text-right"><div className="h-4 w-20 ml-auto bg-gray-200 dark:bg-neutral-700 rounded" /></TableCell>
                   </TableRow>
                 ))
-              : showtimes.map((st) => (
+              : filteredShowtimes.map((st) => (
                   <TableRow key={st.showtimeId}>
                     <TableCell>{st.showtimeId}</TableCell>
                     <TableCell>{st.versionId}</TableCell>
