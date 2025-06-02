@@ -3,8 +3,6 @@
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import axios from "axios"
-
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -21,6 +19,7 @@ import { useRouter } from "next/navigation"
 import toast from "react-hot-toast"
 import { RegisterFormSchema } from "@/validators/register"
 import Link from "next/link"
+import api from "@/utils/apiFetch"
 
 
 export function RegisterForm({
@@ -42,7 +41,7 @@ export function RegisterForm({
 
   async function onSubmit(values: z.infer<typeof RegisterFormSchema>) {
     try {
-      const response = await axios.post('/api/auth/register', values)
+      const response = await api.post('/api/auth/register', values)
 
       console.log("response register :", response.data)
       toast.success("Account created ",{
