@@ -1,7 +1,9 @@
+import AdminLayout from "@/components/ui/AdminLayout";
 import Image from "next/image";
 
 export default function ProfilePage() {
   return (
+    <AdminLayout>
     <div className="min-h-[60vh] flex items-center justify-center bg-transparent">
       <div className="w-full max-w-md bg-white dark:bg-neutral-900 rounded-2xl shadow-xl p-8 border border-neutral-200 dark:border-neutral-800">
         <div className="flex flex-col items-center">
@@ -54,5 +56,6 @@ export default function ProfilePage() {
         </div>
       </div>
     </div>
+    </AdminLayout>
   );
 }

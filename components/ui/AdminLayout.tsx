@@ -1,8 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import Link from "next/link";
-import { Sidebar, SidebarBody, SidebarLink } from "./ui/sidebar";
+import { Sidebar, SidebarBody, SidebarLink } from "./sidebar";
 import {
   IconBrandTabler,
   IconSettings,
@@ -17,17 +16,8 @@ import {
 } from "@tabler/icons-react";
 import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
-import Dashboard from "./dashboard";
-import Users from "./users";
-import Movies from "./movies";
-import Settings from "./settings";
-import Logout from "./logout";
-import Genre from "./genre";
 import Image from "next/image";
-import Showtimes from "./showtime";
-import Reservations from "./reservation";
-import Cinemas from "./cinema";
-import Payments from "./payment";
+import Link from "next/link";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -35,64 +25,22 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 
-export default function AdminHome() {
-  const [active, setActive] = useState("dashboard");
+// Pass "children" to render page content inside layout
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(true);
 
   // Sidebar links (no logout)
   const links = [
-    {
-      id: "dashboard",
-      label: "Dashboard",
-      icon: <IconBrandTabler className="h-5 w-5 rounded-4xl shrink-0" />,
-    },
-    {
-      id: "users",
-      label: "Utilisateurs",
-      icon: <IconUserBolt className="h-5 w-5 rounded-4xl shrink-0" />,
-    },
-    {
-      id: "movies",
-      label: "Films",
-      icon: <IconVideo className="h-5 w-5 rounded-4xl shrink-0" />,
-    },
-    {
-      id: "genre",
-      label: "Genres",
-      icon: <IconCategory className="h-5 w-5 rounded-4xl shrink-0" />,
-    },
-    {
-      id: "showtimes",
-      label: "Séances",
-      icon: <IconClock className="h-5 w-5 rounded-4xl shrink-0" />,
-    },
-    {
-      id: "reservations",
-      label: "Réservations",
-      icon: <IconTicket className="h-5 w-5 rounded-4xl shrink-0" />,
-    },
-    {
-      id: "cinema",
-      label: "Cinéma",
-      icon: <IconVideo className="h-5 w-5 rounded-4xl shrink-0" />,
-    },
-    {
-      id: "payments",
-      label: "Paiements",
-      icon: <IconCreditCard className="h-5 w-5 rounded-4xl shrink-0" />,
-    },
-    {
-      id: "settings",
-      label: "Paramètres",
-      icon: <IconSettings className="h-5 w-5 rounded-4xl shrink-0" />,
-    },
+    { id: "dashboard", label: "Dashboard", icon: <IconBrandTabler className="h-5 w-5" /> },
+    { id: "users", label: "Utilisateurs", icon: <IconUserBolt className="h-5 w-5" /> },
+    { id: "movies", label: "Films", icon: <IconVideo className="h-5 w-5" /> },
+    { id: "genre", label: "Genres", icon: <IconCategory className="h-5 w-5" /> },
+    { id: "showtimes", label: "Séances", icon: <IconClock className="h-5 w-5" /> },
+    { id: "reservations", label: "Réservations", icon: <IconTicket className="h-5 w-5" /> },
+    { id: "cinema", label: "Cinéma", icon: <IconVideo className="h-5 w-5" /> },
+    { id: "payments", label: "Paiements", icon: <IconCreditCard className="h-5 w-5" /> },
+    { id: "settings", label: "Paramètres", icon: <IconSettings className="h-5 w-5" /> },
   ];
-
-  // Optionally: Implement real logout logic here
-  function handleLogout() {
-    setActive("logout");
-    // You can add your signOut logic, clear tokens, etc.
-  }
 
   return (
     <div
@@ -112,21 +60,22 @@ export default function AdminHome() {
                   key={link.id}
                   link={{
                     label: link.label,
-                    href: "#",
+                    href:
+                      link.id === "dashboard"
+                        ? "/"
+                        : `/${link.id}`, // You can adjust the routes as needed
                     icon: link.icon,
                   }}
                   className={cn(
                     "text-sm font-medium",
-                    active === link.id
-                      ? "bg-red-600 p-2 rounded-full text-white"
-                      : "p-2"
+                    // Optionally highlight active link with router
+                    // active === link.id ? "bg-red-600 p-2 rounded-full text-white" : "p-2"
+                    "p-2"
                   )}
-                  onClick={() => setActive(link.id)}
                 />
               ))}
             </div>
           </div>
-
           {/* Bottom Section: Profile Dropdown */}
           <div className="mb-4 flex flex-col items-start">
             <DropdownMenu>
@@ -157,10 +106,13 @@ export default function AdminHome() {
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   className="flex gap-2 items-center text-red-600 focus:bg-red-100 dark:focus:bg-red-900"
-                  onClick={handleLogout}
+                  // onClick={handleLogout}
+                  asChild
                 >
-                  <IconLogout className="h-4 w-4 mr-2" />
-                  Déconnexion
+                  <Link href="/logout">
+                    <IconLogout className="h-4 w-4 mr-2" />
+                    Déconnexion
+                  </Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -169,22 +121,11 @@ export default function AdminHome() {
       </Sidebar>
 
       {/* Main content area */}
-      <main className="flex-1 p-6 overflow-auto bg-white dark:bg-neutral-800">
-        {active === "dashboard" && <Dashboard />}
-        {active === "users" && <Users />}
-        {active === "movies" && <Movies />}
-        {active === "genre" && <Genre />}
-        {active === "showtimes" && <Showtimes />}
-        {active === "reservations" && <Reservations />}
-        {active === "cinema" && <Cinemas />}
-        {active === "payments" && <Payments />}
-        {active === "settings" && <Settings />}
-        {active === "logout" && <Logout />}
-        {/* Remove profile render here; /profile is a separate page */}
-      </main>
+      <main className="flex-1 p-6 overflow-auto bg-white dark:bg-neutral-800">{children}</main>
     </div>
   );
 }
+
 
 const Logo = () => (
   <a
