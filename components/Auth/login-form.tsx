@@ -3,7 +3,6 @@
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import axios from "axios"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -21,7 +20,8 @@ import { Input } from "@/components/ui/input"
 import { useRouter } from "next/navigation"
 import toast from "react-hot-toast"
 import { LoginFormSchema } from "@/validators/login"
-import Link from "next/link"
+import { useAuthStore } from "@/store/AuthStore"
+import api from "@/utils/apiFetch"
 
 
 export function LoginForm({
@@ -41,9 +41,10 @@ export function LoginForm({
 
   async function onSubmit(values: z.infer<typeof LoginFormSchema>) {
     try {
-      const response = await axios.post('/api/auth/login', values)
+      const response = await api.post('/api/auth/login', values)
+      const token = response.token
+      useAuthStore.getState().setToken(token)
 
-      console.log("response login :", response.data)
       toast.success("Login successful!",{
         duration: 5000,
         style: {
