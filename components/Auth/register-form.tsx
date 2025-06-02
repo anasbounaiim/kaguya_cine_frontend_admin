@@ -146,9 +146,15 @@ export function RegisterForm({
                   <Button type="submit" className=" bg-red-700 hover:bg-red-800 cursor-pointer font-extrabold w-fit px-16">
                     Register
                   </Button>
-                  <Link href="/login" className="mt-4 text-sm">
-                    Already have an account? <b className="underline">Login</b>
-                  </Link>
+                  <div className="text-balance text-center text-sm mt-4">
+                    Already have an account?{" "}
+                    <Link
+                      href="/login"
+                      className="underline underline-offset-2 font-bold"
+                    >
+                      Login
+                    </Link>
+                  </div>
                 </div>
 
               </div>

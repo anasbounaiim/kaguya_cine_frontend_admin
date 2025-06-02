@@ -21,6 +21,7 @@ import { Input } from "@/components/ui/input"
 import { useRouter } from "next/navigation"
 import toast from "react-hot-toast"
 import { LoginFormSchema } from "@/validators/login"
+import Link from "next/link"
 
 
 export function LoginForm({
@@ -124,6 +125,17 @@ export function LoginForm({
                   Login
                 </Button>
               </div>
+
+              <div className="text-balance text-center text-sm mt-4">
+                Don&apos;t have an account?{" "}
+                <Link
+                  href="/register"
+                  className="underline underline-offset-2 font-bold"
+                >
+                  Register
+                </Link>
+              </div>
+
             </form>
           </Form>
 
