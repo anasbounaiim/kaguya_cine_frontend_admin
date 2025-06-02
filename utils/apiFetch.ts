@@ -3,9 +3,8 @@
 import axios from "axios";
 
 const apiClient = axios.create({
-  baseURL: process.env.API_URL, // à définir dans .env.local
+  baseURL: process.env.API_URL,
   headers: {
-    // Vous pouvez ajouter ici des headers communs, ex : Authorization, Content-Type, etc.
     "Content-Type": "application/json",
   },
 });

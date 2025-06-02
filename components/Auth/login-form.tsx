@@ -9,7 +9,6 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import Image from "next/image"
-import { formSchema } from "@/validators/login"
 import {
   Form,
   FormControl,
@@ -21,6 +20,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { useRouter } from "next/navigation"
 import toast from "react-hot-toast"
+import { LoginFormSchema } from "@/validators/login"
 
 
 export function LoginForm({
@@ -30,15 +30,15 @@ export function LoginForm({
 
   const router = useRouter();
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof LoginFormSchema>>({
+    resolver: zodResolver(LoginFormSchema),
     defaultValues: {
       email: "",
       password: ""
     },
   })
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof LoginFormSchema>) {
     try {
       const response = await axios.post('/api/auth/login', values)
 
@@ -54,7 +54,7 @@ export function LoginForm({
       router.push("/")
     } catch {
       console.error("Login error")
-      toast.error("Login error!",{
+      toast.error("Login failed",{
         duration: 5000,
         style: {
           border: '1px solid #f87171',
