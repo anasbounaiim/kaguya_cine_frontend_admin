@@ -55,78 +55,41 @@ export default function AdminHome() {
 
   // Sidebar links (no logout)
   const links = [
-    {
-      id: "dashboard",
-      label: "Dashboard",
-      icon: <IconBrandTabler className="h-5 w-5 rounded-4xl shrink-0" />,
-    },
-    {
-      id: "users",
-      label: "Utilisateurs",
-      icon: <IconUserBolt className="h-5 w-5 rounded-4xl shrink-0" />,
-    },
-    {
-      id: "movies",
-      label: "Films",
-      icon: <IconVideo className="h-5 w-5 rounded-4xl shrink-0" />,
-    },
-    {
-      id: "genre",
-      label: "Genres",
-      icon: <IconCategory className="h-5 w-5 rounded-4xl shrink-0" />,
-    },
-    {
-      id: "showtimes",
-      label: "Séances",
-      icon: <IconClock className="h-5 w-5 rounded-4xl shrink-0" />,
-    },
-    {
-      id: "reservations",
-      label: "Réservations",
-      icon: <IconTicket className="h-5 w-5 rounded-4xl shrink-0" />,
-    },
-    {
-      id: "cinema",
-      label: "Cinéma",
-      icon: <IconVideo className="h-5 w-5 rounded-4xl shrink-0" />,
-    },
-    {
-      id: "payments",
-      label: "Paiements",
-      icon: <IconCreditCard className="h-5 w-5 rounded-4xl shrink-0" />,
-    },
-    {
-      id: "settings",
-      label: "Paramètres",
-      icon: <IconSettings className="h-5 w-5 rounded-4xl shrink-0" />,
-    },
+    { id: "dashboard", label: "Dashboard", icon: <IconBrandTabler className="h-5 w-5 rounded-4xl shrink-0" /> },
+    { id: "users", label: "Utilisateurs", icon: <IconUserBolt className="h-5 w-5 rounded-4xl shrink-0" /> },
+    { id: "movies", label: "Films", icon: <IconVideo className="h-5 w-5 rounded-4xl shrink-0" /> },
+    { id: "genre", label: "Genres", icon: <IconCategory className="h-5 w-5 rounded-4xl shrink-0" /> },
+    { id: "showtimes", label: "Séances", icon: <IconClock className="h-5 w-5 rounded-4xl shrink-0" /> },
+    { id: "reservations", label: "Réservations", icon: <IconTicket className="h-5 w-5 rounded-4xl shrink-0" /> },
+    { id: "cinema", label: "Cinéma", icon: <IconVideo className="h-5 w-5 rounded-4xl shrink-0" /> },
+    { id: "payments", label: "Paiements", icon: <IconCreditCard className="h-5 w-5 rounded-4xl shrink-0" /> },
+    { id: "settings", label: "Paramètres", icon: <IconSettings className="h-5 w-5 rounded-4xl shrink-0" /> },
   ];
 
-  const fetchUserProfile = async () => {
-    try {
-      const response = await api.get('/api/user/user-profile');
-      console.log("User profile fetched:", response);
-      setProfile(response);
-    } catch {
-      console.error("User profile fetch error");
-    }
-  };
-
+  // Fetch user profile on mount
   useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const response = await api.get("/api/user/user-profile");
+        setProfile(response);
+      } catch {
+        console.error("User profile fetch error");
+      }
+    };
     fetchUserProfile();
   }, []);
 
-
+  // Handle logout
   const logout = () => {
     useAuthStore.getState().logout();
     setActive("logout");
-    toast.success("Logout successful!", {
+    toast.success("Déconnexion réussie !", {
       duration: 5000,
       style: {
-        border: '1px solid #4ade80',
-        background: '#ecfdf5',
-        color: '#065f46',
-      }
+        border: "1px solid #4ade80",
+        background: "#ecfdf5",
+        color: "#065f46",
+      },
     });
     router.push("/login");
   };
@@ -183,9 +146,14 @@ export default function AdminHome() {
                     width={28}
                     height={28}
                   />
-                  <span className="text-sm font-medium text-neutral-900 dark:text-white">
-                    {profile?.firstName} {profile?.lastName}
-                  </span>
+                  {/* Only show the name when sidebar is open */}
+                  {open && (
+                    <span className="text-sm font-medium text-neutral-900 dark:text-white">
+                      {profile
+                        ? `${profile.firstName} ${profile.lastName}`
+                        : "Profil"}
+                    </span>
+                  )}
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent
@@ -223,12 +191,12 @@ export default function AdminHome() {
         {active === "payments" && <Payments />}
         {active === "settings" && <Settings />}
         {active === "logout" && <Logout />}
-        {/* Remove profile render here; /profile is a separate page */}
       </main>
     </div>
   );
 }
 
+// Logo components using the custom SVG
 const Logo = () => (
   <a
     href="#"
@@ -263,4 +231,3 @@ const LogoIcon = () => (
     />
   </a>
 );
-
