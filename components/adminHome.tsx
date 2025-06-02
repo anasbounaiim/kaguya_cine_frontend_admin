@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { Sidebar, SidebarBody, SidebarLink } from "./ui/sidebar";
 import {
@@ -34,10 +34,24 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
+import { useAuthStore } from "@/store/AuthStore";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
+import api from "@/utils/apiFetch";
 
 export default function AdminHome() {
   const [active, setActive] = useState("dashboard");
   const [open, setOpen] = useState(true);
+
+  type UserProfile = {
+    firstName: string;
+    lastName: string;
+    email: string;
+    role: string;
+  };
+
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const router = useRouter();
 
   // Sidebar links (no logout)
   const links = [
@@ -88,11 +102,34 @@ export default function AdminHome() {
     },
   ];
 
-  // Optionally: Implement real logout logic here
-  function handleLogout() {
+  const fetchUserProfile = async () => {
+    try {
+      const response = await api.get('/api/user/user-profile');
+      console.log("User profile fetched:", response);
+      setProfile(response);
+    } catch {
+      console.error("User profile fetch error");
+    }
+  };
+
+  useEffect(() => {
+    fetchUserProfile();
+  }, []);
+
+
+  const logout = () => {
+    useAuthStore.getState().logout();
     setActive("logout");
-    // You can add your signOut logic, clear tokens, etc.
-  }
+    toast.success("Logout successful!", {
+      duration: 5000,
+      style: {
+        border: '1px solid #4ade80',
+        background: '#ecfdf5',
+        color: '#065f46',
+      }
+    });
+    router.push("/login");
+  };
 
   return (
     <div
@@ -108,21 +145,25 @@ export default function AdminHome() {
             {open ? <Logo /> : <LogoIcon />}
             <div className="mt-8 flex flex-col gap-2">
               {links.map((link) => (
-                <SidebarLink
+                <div
                   key={link.id}
-                  link={{
-                    label: link.label,
-                    href: "#",
-                    icon: link.icon,
-                  }}
-                  className={cn(
-                    "text-sm font-medium",
-                    active === link.id
-                      ? "bg-red-600 p-2 rounded-full text-white"
-                      : "p-2"
-                  )}
                   onClick={() => setActive(link.id)}
-                />
+                  style={{ cursor: "pointer" }}
+                >
+                  <SidebarLink
+                    link={{
+                      label: link.label,
+                      href: "#",
+                      icon: link.icon,
+                    }}
+                    className={cn(
+                      "text-sm font-medium",
+                      active === link.id
+                        ? "bg-red-600 p-2 rounded-full text-white"
+                        : "p-2"
+                    )}
+                  />
+                </div>
               ))}
             </div>
           </div>
@@ -142,7 +183,9 @@ export default function AdminHome() {
                     width={28}
                     height={28}
                   />
-                  <span className="text-sm font-medium text-neutral-900 dark:text-white">Manu Arora</span>
+                  <span className="text-sm font-medium text-neutral-900 dark:text-white">
+                    {profile?.firstName} {profile?.lastName}
+                  </span>
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent
@@ -157,7 +200,7 @@ export default function AdminHome() {
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   className="flex gap-2 items-center text-red-600 focus:bg-red-100 dark:focus:bg-red-900"
-                  onClick={handleLogout}
+                  onClick={logout}
                 >
                   <IconLogout className="h-4 w-4 mr-2" />
                   Déconnexion
