@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { useRouter } from "next/navigation"
+import toast from "react-hot-toast"
 
 
 export function LoginForm({
@@ -41,10 +42,26 @@ export function LoginForm({
     try {
       const response = await axios.post('/api/auth/login', values)
 
-      console.log("Success:", response.data)
+      console.log("response login :", response.data)
+      toast.success("Login successful!",{
+        duration: 5000,
+        style: {
+          border: '1px solid #4ade80',
+          background: '#ecfdf5',
+          color: '#065f46',
+        }
+      })
       router.push("/")
     } catch {
       console.error("Login error")
+      toast.error("Login error!",{
+        duration: 5000,
+        style: {
+          border: '1px solid #f87171',
+          background: '#fee2e2',
+          color: '#b91c1c',
+        }
+      })
     }
   }
 

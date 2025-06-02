@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Figtree } from "next/font/google";
+import { Toaster } from "react-hot-toast";
 import "./globals.css";
 
 const figtree = Figtree({
@@ -22,6 +23,7 @@ export default function RootLayout({
       <body
         className={`${figtree.className}`}
       >
+        <Toaster position="top-right" />
         {children}
       </body>
     </html>
