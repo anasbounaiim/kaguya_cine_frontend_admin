@@ -228,6 +228,10 @@ export default function Cinema() {
             </Card>
           ))
         )}
+
+
+
+
       </div>
     </div>
   );

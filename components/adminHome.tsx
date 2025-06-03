@@ -55,15 +55,51 @@ export default function AdminHome() {
 
   // Sidebar links (no logout)
   const links = [
-    { id: "dashboard", label: "Dashboard", icon: <IconBrandTabler className="h-5 w-5 rounded-4xl shrink-0" /> },
-    { id: "users", label: "Utilisateurs", icon: <IconUserBolt className="h-5 w-5 rounded-4xl shrink-0" /> },
-    { id: "movies", label: "Films", icon: <IconVideo className="h-5 w-5 rounded-4xl shrink-0" /> },
-    { id: "genre", label: "Genres", icon: <IconCategory className="h-5 w-5 rounded-4xl shrink-0" /> },
-    { id: "showtimes", label: "Séances", icon: <IconClock className="h-5 w-5 rounded-4xl shrink-0" /> },
-    { id: "reservations", label: "Réservations", icon: <IconTicket className="h-5 w-5 rounded-4xl shrink-0" /> },
-    { id: "cinema", label: "Cinéma", icon: <IconVideo className="h-5 w-5 rounded-4xl shrink-0" /> },
-    { id: "payments", label: "Paiements", icon: <IconCreditCard className="h-5 w-5 rounded-4xl shrink-0" /> },
-    { id: "settings", label: "Paramètres", icon: <IconSettings className="h-5 w-5 rounded-4xl shrink-0" /> },
+    {
+      id: "dashboard",
+      label: "Dashboard",
+      icon: <IconBrandTabler className="h-5 w-5 rounded-4xl shrink-0" />,
+    },
+    {
+      id: "users",
+      label: "Utilisateurs",
+      icon: <IconUserBolt className="h-5 w-5 rounded-4xl shrink-0" />,
+    },
+    {
+      id: "movies",
+      label: "Films",
+      icon: <IconVideo className="h-5 w-5 rounded-4xl shrink-0" />,
+    },
+    {
+      id: "genre",
+      label: "Genres",
+      icon: <IconCategory className="h-5 w-5 rounded-4xl shrink-0" />,
+    },
+    {
+      id: "showtimes",
+      label: "Séances",
+      icon: <IconClock className="h-5 w-5 rounded-4xl shrink-0" />,
+    },
+    {
+      id: "reservations",
+      label: "Réservations",
+      icon: <IconTicket className="h-5 w-5 rounded-4xl shrink-0" />,
+    },
+    {
+      id: "cinema",
+      label: "Cinéma",
+      icon: <IconVideo className="h-5 w-5 rounded-4xl shrink-0" />,
+    },
+    {
+      id: "payments",
+      label: "Paiements",
+      icon: <IconCreditCard className="h-5 w-5 rounded-4xl shrink-0" />,
+    },
+    {
+      id: "settings",
+      label: "Paramètres",
+      icon: <IconSettings className="h-5 w-5 rounded-4xl shrink-0" />,
+    },
   ];
 
   // Fetch user profile on mount
@@ -140,12 +176,19 @@ export default function AdminHome() {
                   tabIndex={0}
                 >
                   <Image
-                    src="https://assets.aceternity.com/manu.png"
+                    src={
+                      profile
+                        ? `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                            profile.firstName + " " + profile.lastName
+                          )}`
+                        : "https://ui-avatars.com/api/?name=User"
+                    }
                     className="h-7 w-7 shrink-0 rounded-full"
                     alt="Avatar"
                     width={28}
                     height={28}
                   />
+
                   {/* Only show the name when sidebar is open */}
                   {open && (
                     <span className="text-sm font-medium text-neutral-900 dark:text-white">
@@ -160,7 +203,10 @@ export default function AdminHome() {
                 align="end"
                 className="w-48 bg-white dark:bg-neutral-800 shadow-xl rounded-xl border border-neutral-200 dark:border-neutral-700"
               >
-                <DropdownMenuItem asChild className="flex gap-2 items-center text-neutral-900 dark:text-white focus:bg-neutral-100 dark:focus:bg-neutral-700">
+                <DropdownMenuItem
+                  asChild
+                  className="flex gap-2 items-center text-neutral-900 dark:text-white focus:bg-neutral-100 dark:focus:bg-neutral-700"
+                >
                   <Link href="/profile">
                     <IconUser className="h-4 w-4 mr-2" />
                     Profil

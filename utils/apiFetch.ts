@@ -3,7 +3,7 @@ import { useAuthStore } from "@/store/AuthStore";
 
 // Crée l'instance Axios
 const apiClient = axios.create({
-  baseURL: process.env.API_URL,
+  baseURL: process.env.API_URL, 
   headers: {
     "Content-Type": "application/json",
   },
