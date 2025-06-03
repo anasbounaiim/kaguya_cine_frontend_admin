@@ -28,6 +28,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "./ui/chart";
+import { useAuthStore } from "@/store/AuthStore";
 
 const areaChartData = [
   { month: "January", desktop: 186, mobile: 80 },
@@ -66,10 +67,11 @@ const Dashboard = () => {
   }, []);
 
   const totalVisitors = pieChartData.reduce((acc, curr) => acc + curr.visitors, 0);
+  const userProfile = useAuthStore((state) => state.profile);
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Bienvenue sur le tableau de bord</h1>
+      <h1 className="text-3xl font-bold">Bienvenue <b className="text-red-700">{userProfile?.firstName}</b> sur le tableau de bord</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {loading ? (

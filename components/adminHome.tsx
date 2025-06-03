@@ -72,6 +72,7 @@ export default function AdminHome() {
       try {
         const response = await api.get("/api/user/user-profile");
         setProfile(response);
+        useAuthStore.getState().setProfile(response);
       } catch {
         console.error("User profile fetch error");
       }
