@@ -76,7 +76,14 @@ export function LoginForm({
             <form onSubmit={form.handleSubmit(onSubmit)}className="p-6 md:p-8">
               <div className="flex flex-col gap-10">
                 <div className="flex flex-col items-center text-center">
-                  <h1 className="text-2xl font-bold">Welcome back</h1>
+                  <Image
+                    src="/KaguyaCine logo svg.svg"
+                    alt="KaguyaCine Logo"
+                    width={40}
+                    height={40}
+                    className="h-12 w-12 rounded-lg bg-white dark:bg-transparent"
+                  />
+                  <h1 className="text-2xl font-bold mt-3">Welcome back</h1>
                   <p className="text-balance text-muted-foreground">
                     Login to your KaguyaCine Lab account
                   </p>
