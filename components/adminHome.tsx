@@ -181,10 +181,10 @@ export default function AdminHome() {
 
           {/* Bottom Section: Profile Dropdown */}
           <div className="mb-4 flex flex-col items-start">
-            <DropdownMenu>
+            <DropdownMenu modal={false}>
               <DropdownMenuTrigger asChild>
                 <button
-                  className="flex items-center gap-2 cursor-pointer hover:bg-neutral-200 dark:hover:bg-neutral-700 rounded-full p-2 transition"
+                  className="flex items-center gap-2 cursor-pointer hover:bg-neutral-200 dark:hover:bg-neutral-700 rounded-full p-1 transition"
                   tabIndex={0}
                 >
                   <Image
@@ -211,27 +211,29 @@ export default function AdminHome() {
                   )}
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent
-                align="end"
-                className="w-48 bg-white dark:bg-neutral-800 shadow-xl rounded-xl border border-neutral-200 dark:border-neutral-700"
-              >
-                <DropdownMenuItem
-                  asChild
-                  className="flex gap-2 items-center text-neutral-900 dark:text-white focus:bg-neutral-100 dark:focus:bg-neutral-700"
+              {open && (
+                <DropdownMenuContent
+                  align="start"
+                  className="w-48 bg-white dark:bg-neutral-800 shadow-xl rounded-xl border border-neutral-200 dark:border-neutral-700"
                 >
-                  <Link href="/profile">
-                    <IconUser className="h-4 w-4 mr-2" />
-                    Profil
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  className="flex gap-2 items-center text-red-600 focus:bg-red-100 dark:focus:bg-red-900"
-                  onClick={logout}
-                >
-                  <IconLogout className="h-4 w-4 mr-2" />
-                  Déconnexion
-                </DropdownMenuItem>
-              </DropdownMenuContent>
+                  <DropdownMenuItem
+                    asChild
+                    className="cursor-pointer font-medium flex gap-2 items-center text-neutral-900 dark:text-white focus:bg-neutral-100 dark:focus:bg-neutral-700"
+                  >
+                    <Link href="/profile">
+                      <IconUser className="h-4 w-4 mr-2" />
+                      Profil
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="cursor-pointer font-medium flex gap-2 items-center text-red-600 focus:bg-red-100 dark:focus:bg-red-900"
+                    onClick={logout}
+                  >
+                    <IconLogout className="h-4 w-4 mr-2" />
+                    Déconnexion
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              )}
             </DropdownMenu>
           </div>
         </SidebarBody>
@@ -256,8 +258,8 @@ export default function AdminHome() {
 
 // Logo components using the custom SVG
 const Logo = () => (
-  <a
-    href="#"
+  <Link
+    href="/"
     className="relative z-20 flex items-center space-x-2 px-0.5 py-1 text-sm font-normal text-black"
   >
     <Image
@@ -274,12 +276,12 @@ const Logo = () => (
     >
       KaguyaCine LAB
     </motion.span>
-  </a>
+  </Link>
 );
 
 const LogoIcon = () => (
-  <a
-    href="#"
+  <Link
+    href="/"
     className="relative z-20 flex items-center space-x-2 px-0.5 py-1 text-sm font-normal text-black"
   >
     <Image
@@ -289,5 +291,5 @@ const LogoIcon = () => (
       alt="KaguyaCine Logo"
       className="rounded-lg bg-red-600 h-8 w-8"
     />
-  </a>
+  </Link>
 );
