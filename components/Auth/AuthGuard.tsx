@@ -1,20 +1,32 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAuthStore } from "@/store/AuthStore";
+import api from "@/utils/apiFetch"; // ou simplement fetch
 
 export default function AuthGuard({ children }: { children: React.ReactNode }) {
-  const token = useAuthStore((state) => state.token);
+  const [auth, setAuth] = useState<null | boolean>(null);
   const router = useRouter();
 
   useEffect(() => {
-    if (!token) {
-      router.replace("/login");
-    }
-  }, [token, router]);
+    // Vérifie l’authentification en appelant l’API route
+    api
+      .get("/api/auth/me")
+      .then(() => setAuth(true))
+      .catch(() => {
+        setAuth(false);
+        router.replace("/login");
+      });
+  }, [router]);
 
-  if (!token) return null;
+  if (auth === null)
+    return (
+      <div className="flex items-center justify-center h-screen w-full">
+        <span>Chargement...</span>
+      </div>
+    );
+
+  if (!auth) return null; // Redirection vers /login
 
   return <>{children}</>;
 }

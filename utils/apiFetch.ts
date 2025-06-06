@@ -1,28 +1,12 @@
 import axios, { AxiosRequestConfig } from "axios";
-import { useAuthStore } from "@/store/AuthStore";
 
-// Crée l'instance Axios
 const apiClient = axios.create({
-  baseURL: process.env.API_URL, 
+  baseURL: process.env.API_URL,
   headers: {
     "Content-Type": "application/json",
   },
+  withCredentials: true, // clé pour que les cookies (dont HttpOnly) soient envoyés !
 });
-
-// Interceptor (injecte le token du store si appelé côté client React)
-if (typeof window !== "undefined") {
-  apiClient.interceptors.request.use(
-    (config) => {
-      const token = useAuthStore.getState().token;
-      if (token) {
-        config.headers = config.headers || {};
-        config.headers.Authorization = `Bearer ${token}`;
-      }
-      return config;
-    },
-    (error) => Promise.reject(error)
-  );
-}
 
 // Helper pour query string
 const buildQueryString = (params?: Record<string, string | number>) => {
@@ -30,7 +14,6 @@ const buildQueryString = (params?: Record<string, string | number>) => {
   return '?' + new URLSearchParams(params as Record<string, string>).toString();
 };
 
-// Les fonctions prennent en option un config Axios pour override headers côté API route
 const api = {
   get: (
     endpoint: string,
@@ -43,14 +26,14 @@ const api = {
 
   post: (
     endpoint: string,
-    body: any,
+    body: unknown,
     config: AxiosRequestConfig = {}
   ) =>
     apiClient.post(endpoint, body, config).then((res) => res.data),
 
   put: (
     endpoint: string,
-    body: any,
+    body: unknown,
     config: AxiosRequestConfig = {}
   ) =>
     apiClient.put(endpoint, body, config).then((res) => res.data),

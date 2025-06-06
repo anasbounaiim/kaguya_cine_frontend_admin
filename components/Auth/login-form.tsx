@@ -3,7 +3,6 @@
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -20,9 +19,7 @@ import { Input } from "@/components/ui/input"
 import { useRouter } from "next/navigation"
 import toast from "react-hot-toast"
 import { LoginFormSchema } from "@/validators/login"
-import { useAuthStore } from "@/store/AuthStore"
 import api from "@/utils/apiFetch"
-
 
 export function LoginForm({
   className,
@@ -41,9 +38,8 @@ export function LoginForm({
 
   async function onSubmit(values: z.infer<typeof LoginFormSchema>) {
     try {
-      const response = await api.post('/api/auth/login', values)
-      const token = response.token
-      useAuthStore.getState().setToken(token)
+      // Appel à l'API route Next.js (qui pose le cookie HttpOnly)
+      await api.post('/api/auth/login', values);
 
       toast.success("Login successful!",{
         duration: 5000,
@@ -54,8 +50,8 @@ export function LoginForm({
         }
       })
       router.push("/")
-    } catch {
-      console.error("Login error")
+    } catch (err: unknown) {
+      console.error("Login error", err)
       toast.error("Login failed",{
         duration: 5000,
         style: {
@@ -73,7 +69,7 @@ export function LoginForm({
         <CardContent className="grid p-0 md:grid-cols-2">
           
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)}className="p-6 md:p-8">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="p-6 md:p-8">
               <div className="flex flex-col gap-10">
                 <div className="flex flex-col items-center text-center">
                   <Image
@@ -122,7 +118,7 @@ export function LoginForm({
                         </div>
                       </FormLabel>
                       <FormControl>
-                        <Input placeholder="***************" {...field} className="bg-white text-black" />
+                        <Input placeholder="***************" type="password" {...field} className="bg-white text-black" />
                       </FormControl>
                       <FormMessage className="text-red-400" />
                     </FormItem>
@@ -133,7 +129,6 @@ export function LoginForm({
                   Login
                 </Button>
               </div>
-
             </form>
           </Form>
 

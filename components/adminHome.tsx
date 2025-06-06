@@ -107,6 +107,7 @@ export default function AdminHome() {
     const fetchUserProfile = async () => {
       try {
         const response = await api.get("/api/user/user-profile");
+        console.log("User profile fetched:", response);
         setProfile(response);
         useAuthStore.getState().setProfile(response);
       } catch {
@@ -116,10 +117,12 @@ export default function AdminHome() {
     fetchUserProfile();
   }, []);
 
-  // Handle logout
-  const logout = () => {
-    useAuthStore.getState().logout();
+  const logout = async () => {
+  try {
+    // Appelle l'API route Next.js qui va effacer le cookie HttpOnly
+    await api.post("/api/auth/logout", {});
     setActive("logout");
+    setProfile(null); // On reset le profil local
     toast.success("Déconnexion réussie !", {
       duration: 5000,
       style: {
@@ -129,7 +132,18 @@ export default function AdminHome() {
       },
     });
     router.push("/login");
-  };
+  } catch {
+    toast.error("Erreur lors de la déconnexion", {
+      duration: 5000,
+      style: {
+        border: "1px solid #f87171",
+        background: "#fee2e2",
+        color: "#b91c1c",
+      },
+    });
+  }
+};
+
 
   return (
     <div
