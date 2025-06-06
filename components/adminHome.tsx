@@ -238,7 +238,7 @@ export default function AdminHome() {
       </Sidebar>
 
       {/* Main content area */}
-      <main className="flex-1 p-6 overflow-auto bg-white dark:bg-neutral-800">
+      <main className="flex-1 py-5 px-6 overflow-auto bg-white dark:bg-neutral-800">
         {active === "dashboard" && <Dashboard />}
         {active === "users" && <Users />}
         {active === "movies" && <Movies />}
