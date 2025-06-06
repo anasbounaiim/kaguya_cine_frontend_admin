@@ -65,19 +65,19 @@ export function LoginForm({
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card className="overflow-hidden rounded-3xl py-0 bg-black text-white border-0 border-b-2 border-white">
-        <CardContent className="grid p-0 md:grid-cols-2">
+      <Card className="overflow-hidden rounded-4xl py-0 bg-black/40 text-white border-0 border-b-2 border-red-700 w-fit mx-auto">
+        <CardContent>
           
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="p-6 md:p-8">
               <div className="flex flex-col gap-10">
-                <div className="flex flex-col items-center text-center">
+                <div className="flex flex-col items-center text-center mb-4">
                   <Image
                     src="/KaguyaCine logo svg.svg"
                     alt="KaguyaCine Logo"
                     width={40}
                     height={40}
-                    className="h-12 w-12 rounded-lg bg-white dark:bg-transparent"
+                    className="h-12 w-12 rounded-lg bg-red-700"
                   />
                   <h1 className="text-2xl font-bold mt-3">Welcome back</h1>
                   <p className="text-balance text-muted-foreground">
@@ -131,21 +131,8 @@ export function LoginForm({
               </div>
             </form>
           </Form>
-
-          <div className="relative right-0 hidden md:block">
-            <Image
-                src="/bg-login.png"
-                width={1000}
-                height={1000}
-                alt="KaguyaCine Lab Login Background"
-                className="object-cover opacity-80"
-            />
-          </div>
         </CardContent>
       </Card>
-      <div className="text-balance text-center text-sm text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 hover:[&_a]:text-primary">
-        &copy; 2025 <b>KaguyaCine Lab</b>. All rights reserved.
-      </div>
     </div>
   )
 }
