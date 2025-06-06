@@ -21,7 +21,6 @@ import Dashboard from "./dashboard";
 import Users from "./users";
 import Movies from "./movies";
 import Settings from "./settings";
-import Logout from "./logout";
 import Genre from "./genre";
 import Image from "next/image";
 import Showtimes from "./showtime";
@@ -250,7 +249,6 @@ export default function AdminHome() {
         {active === "cinema" && <Cinemas />}
         {active === "payments" && <Payments />}
         {active === "settings" && <Settings />}
-        {active === "logout" && <Logout />}
       </main>
     </div>
   );

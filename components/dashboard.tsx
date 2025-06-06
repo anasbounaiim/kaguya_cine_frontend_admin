@@ -29,6 +29,7 @@ import {
   ChartTooltipContent,
 } from "./ui/chart";
 import { useAuthStore } from "@/store/AuthStore";
+import { Skeleton } from "./ui/skeleton";
 
 const areaChartData = [
   { month: "January", desktop: 186, mobile: 80 },
@@ -62,7 +63,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 1200);
+    const timer = setTimeout(() => setLoading(false), 3000);
     return () => clearTimeout(timer);
   }, []);
 
@@ -71,16 +72,23 @@ const Dashboard = () => {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Bienvenue <b className="text-red-700">{userProfile?.firstName}</b> sur le tableau de bord</h1>
+      {loading ? (
+        <Skeleton className="h-[40px] w-[500px] rounded-xl bg-black animate-pulse" />
+      ):(
+        <h1 className="text-3xl font-bold">Bienvenue <b className="text-red-700">{userProfile?.firstName}</b> sur le tableau de bord</h1>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {loading ? (
-          [...Array(3)].map((_, idx) => (
-            <div
-              key={idx}
-              className="h-[300px] rounded-lg bg-gray-100 dark:bg-neutral-800 animate-pulse"
-            />
-          ))
+          <>
+            <Skeleton className="h-[140px] rounded-3xl bg-black animate-pulse" />
+            <Skeleton className="h-[140px] rounded-3xl bg-black animate-pulse" />
+            <Skeleton className="h-[140px] rounded-3xl bg-black animate-pulse" />
+
+            <Skeleton className="h-[340px] rounded-3xl bg-black animate-pulse" />
+            <Skeleton className="h-[340px] rounded-3xl bg-black animate-pulse" />
+            <Skeleton className="h-[340px] rounded-3xl bg-black animate-pulse" />
+          </>
         ) : (
           <>
             <Card className="p-6">
