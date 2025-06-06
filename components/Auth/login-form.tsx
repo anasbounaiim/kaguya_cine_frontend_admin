@@ -65,7 +65,7 @@ export function LoginForm({
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card className="overflow-hidden rounded-4xl py-0 bg-black/40 text-white border-0 border-b-2 border-red-700 w-fit mx-auto">
+      <Card className="overflow-hidden rounded-4xl py-0 bg-black/80 text-white border border-red-900 w-fit mx-auto">
         <CardContent>
           
           <Form {...form}>
