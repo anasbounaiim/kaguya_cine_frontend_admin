@@ -53,7 +53,6 @@ export default function AdminHome() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const router = useRouter();
 
-  // Sidebar links (no logout)
   const links = [
     {
       id: "dashboard",
@@ -102,7 +101,6 @@ export default function AdminHome() {
     },
   ];
 
-  // Fetch user profile on mount
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
@@ -119,10 +117,9 @@ export default function AdminHome() {
 
   const logout = async () => {
   try {
-    // Appelle l'API route Next.js qui va effacer le cookie HttpOnly
     await api.post("/api/auth/logout", {});
     setActive("logout");
-    setProfile(null); // On reset le profil local
+    setProfile(null);
     toast.success("Déconnexion réussie !", {
       duration: 5000,
       style: {
@@ -173,7 +170,7 @@ export default function AdminHome() {
                     className={cn(
                       "text-sm font-medium",
                       active === link.id
-                        ? "bg-red-600 p-2 rounded-full text-white"
+                        ? "p-2 rounded-full text-red-600"
                         : "p-2"
                     )}
                   />
@@ -261,13 +258,14 @@ export default function AdminHome() {
 const Logo = () => (
   <a
     href="#"
-    className="relative z-20 flex items-center space-x-2 py-1 text-sm font-normal text-black"
+    className="relative z-20 flex items-center space-x-2 px-0.5 py-1 text-sm font-normal text-black"
   >
-    <img
+    <Image
+      width={30}
+      height={30}
       src="/KaguyaCine logo svg.svg"
       alt="KaguyaCine Logo"
-      className="h-8 w-8 rounded-lg bg-white dark:bg-transparent"
-      style={{ minWidth: 40, minHeight: 40 }}
+      className="rounded-lg bg-red-600 h-8 w-8"
     />
     <motion.span
       initial={{ opacity: 0 }}
@@ -282,13 +280,14 @@ const Logo = () => (
 const LogoIcon = () => (
   <a
     href="#"
-    className="relative z-20 flex items-center space-x-2 py-1 text-sm font-normal text-black"
+    className="relative z-20 flex items-center space-x-2 px-0.5 py-1 text-sm font-normal text-black"
   >
-    <img
+    <Image
+      width={30}
+      height={30}
       src="/KaguyaCine logo svg.svg"
       alt="KaguyaCine Logo"
-      className="h-8 w-8 rounded-lg bg-white dark:bg-transparent"
-      style={{ minWidth: 40, minHeight: 40 }}
+      className="rounded-lg bg-red-600 h-8 w-8"
     />
   </a>
 );

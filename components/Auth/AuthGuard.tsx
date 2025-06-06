@@ -2,14 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import api from "@/utils/apiFetch"; // ou simplement fetch
+import api from "@/utils/apiFetch";
 
 export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const [auth, setAuth] = useState<null | boolean>(null);
   const router = useRouter();
 
   useEffect(() => {
-    // Vérifie l’authentification en appelant l’API route
     api
       .get("/api/auth/me")
       .then(() => setAuth(true))
@@ -26,7 +25,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
       </div>
     );
 
-  if (!auth) return null; // Redirection vers /login
+  if (!auth) return null;
 
   return <>{children}</>;
 }
