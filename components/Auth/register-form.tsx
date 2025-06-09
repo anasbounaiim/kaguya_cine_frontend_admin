@@ -68,7 +68,7 @@ export function RegisterForm({
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card className="overflow-hidden rounded-3xl py-0 bg-black text-white border-0 border-b-2 border-white">
+      <Card className="overflow-hidden rounded-4xl py-0 bg-black/70 text-white border border-b-4 border-red-700 w-fit mx-auto">
         <CardContent className="">
           
           <Form {...form}>

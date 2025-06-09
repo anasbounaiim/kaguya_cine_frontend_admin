@@ -65,7 +65,7 @@ export function LoginForm({
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card className="overflow-hidden rounded-4xl py-0 bg-black/80 text-white border border-red-900 w-fit mx-auto">
+      <Card className="overflow-hidden rounded-4xl py-0 bg-black/70 text-white border border-b-4 border-red-700 w-fit mx-auto">
         <CardContent>
           
           <Form {...form}>
@@ -133,6 +133,9 @@ export function LoginForm({
           </Form>
         </CardContent>
       </Card>
+      <div className="text-balance text-center text-sm text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 hover:[&_a]:text-primary">
+        &copy; 2025 <b>KaguyaCine Lab</b>. All rights reserved.
+      </div>
     </div>
   )
 }
