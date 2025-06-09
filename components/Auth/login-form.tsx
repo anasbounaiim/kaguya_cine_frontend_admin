@@ -20,6 +20,7 @@ import { useRouter } from "next/navigation"
 import toast from "react-hot-toast"
 import { LoginFormSchema } from "@/validators/login"
 import api from "@/utils/apiFetch"
+import Link from "next/link"
 
 export function LoginForm({
   className,
@@ -109,12 +110,12 @@ export function LoginForm({
                           <span>
                             Password
                           </span>
-                          <a
-                            href="#"
+                          <Link
+                            href="/reset-password"
                             className="ml-auto text-sm underline-offset-2 hover:underline"
                           >
                             Forgot your password?
-                          </a>
+                          </Link>
                         </div>
                       </FormLabel>
                       <FormControl>
