@@ -2,31 +2,36 @@
 
 import Image from "next/image";
 import { useAuthStore } from "@/store/AuthStore";
-import { useState } from "react";
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import toast from "react-hot-toast";
+import api from "@/utils/apiFetch";
 
 export default function ProfilePage() {
   const profile = useAuthStore((state) => state.profile);
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
 
-  const handlePasswordReset = () => {
-    if (newPassword !== confirmPassword) {
-      alert("Les mots de passe ne correspondent pas.");
-      return;
+  const handleSendResetEmail = async () => {
+    try {
+      await api.post("/api/auth/reset-password/request", {
+        email: profile?.email,
+      });
+
+      toast.success("Un lien de réinitialisation a été envoyé à votre adresse e-mail.", {
+        duration: 5000,
+        style: {
+          border: "1px solid #4ade80",
+          background: "#ecfdf5",
+          color: "#065f46",
+        },
+      });
+    } catch (err) {
+      toast.error("Erreur lors de l'envoi de l'e-mail de réinitialisation.", {
+        duration: 5000,
+        style: {
+          border: "1px solid #f87171",
+          background: "#fee2e2",
+          color: "#b91c1c",
+        },
+      });
     }
-
-    // 👇 Make an API call here (add token in URL or store it based on your flow)
-    console.log("New password to submit:", newPassword);
   };
 
   if (!profile) {
@@ -80,37 +85,12 @@ export default function ProfilePage() {
               Modifier le profil
             </button>
 
-            <Dialog>
-              <DialogTrigger asChild>
-                <button className="w-full px-5 py-2 bg-transparent border-2 border-red-600 text-red-600 rounded-full font-semibold hover:bg-red-600 hover:text-white transition">
-                  Réinitialiser le mot de passe
-                </button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-md">
-                <DialogHeader>
-                  <DialogTitle>Réinitialiser le mot de passe</DialogTitle>
-                </DialogHeader>
-                <div className="flex flex-col gap-4 mt-4">
-                  <Input
-                    type="password"
-                    placeholder="Nouveau mot de passe"
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                  />
-                  <Input
-                    type="password"
-                    placeholder="Confirmer le mot de passe"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                  />
-                </div>
-                <DialogFooter className="mt-4">
-                  <Button onClick={handlePasswordReset} variant="outline"
-  className="w-full rounded-full border-2 border-red-600 text-red-600 font-semibold hover:bg-red-600 hover:text-white transition"
->Reset Password</Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
+            <button
+              onClick={handleSendResetEmail}
+              className="w-full px-5 py-2 bg-transparent border-2 border-red-600 text-red-600 rounded-full font-semibold hover:bg-red-600 hover:text-white transition"
+            >
+              Réinitialiser le mot de passe
+            </button>
           </div>
         </div>
       </div>
