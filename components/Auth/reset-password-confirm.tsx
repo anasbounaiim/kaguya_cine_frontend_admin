@@ -36,29 +36,42 @@ export function ResetPasswordConfirmForm({
   const formResetPassword = useForm<z.infer<typeof ResetPasswordTokenFormSchema>>({
     resolver: zodResolver(ResetPasswordTokenFormSchema),
     defaultValues: {
-      newPassword: ""
+      newPassword: "",
+      confirmNewPassword: "",
     },
   })
 
   async function resetPassword(values: z.infer<typeof ResetPasswordTokenFormSchema>) {
     try {
-      const response = await api.post('/api/auth/reset-password/confirm', 
-        {
-          ...values,
-          token: token
-        }
-      )
-
-      console.log("Password has been successfully reset!:", response.data)
-      toast.success("Password has been successfully reset! ",{
-        duration: 5000,
-        style: {
-          border: '1px solid #4ade80',
-          background: '#ecfdf5',
-          color: '#065f46',
-        }
-      })
-      setStatus("success")
+      if (values.newPassword !== values.confirmNewPassword) {
+        toast.error("Passwords do not match",{
+          duration: 5000,
+          style: {
+            border: '1px solid #f87171',
+            background: '#fee2e2',
+            color: '#b91c1c',
+          }
+        })
+        return;
+      } else {
+        const response = await api.post('/api/auth/reset-password/confirm', 
+          {
+            newPassword: values.newPassword,
+            token: token
+          }
+        )
+  
+        console.log("Password has been successfully reset!:", response.data)
+        toast.success("Password has been successfully reset! ",{
+          duration: 5000,
+          style: {
+            border: '1px solid #4ade80',
+            background: '#ecfdf5',
+            color: '#065f46',
+          }
+        })
+        setStatus("success")
+      }
     } catch {
       toast.error("Error",{
         duration: 5000,
@@ -97,7 +110,21 @@ export function ResetPasswordConfirmForm({
                           <FormItem className="w-full">
                             <FormLabel>New Password</FormLabel>
                             <FormControl>
-                              <Input placeholder="***************" {...field} className="bg-white text-black" />
+                              <Input placeholder="***************" type="password" {...field} className="bg-white text-black" />
+                            </FormControl>
+                            <FormMessage className="text-red-400" />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={formResetPassword.control}
+                        name="confirmNewPassword"
+                        render={({ field }) => (
+                          <FormItem className="w-full">
+                            <FormLabel>Confirm new Password</FormLabel>
+                            <FormControl>
+                              <Input placeholder="***************" type="password" {...field} className="bg-white text-black" />
                             </FormControl>
                             <FormMessage className="text-red-400" />
                           </FormItem>

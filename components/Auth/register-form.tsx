@@ -133,7 +133,7 @@ export function RegisterForm({
                       <FormItem className="w-full">
                         <FormLabel>Password</FormLabel>
                         <FormControl>
-                          <Input placeholder="***************" {...field} className="bg-white text-black" />
+                          <Input placeholder="***************" type="password" {...field} className="bg-white text-black" />
                         </FormControl>
                         <FormMessage className="text-red-400" />
                       </FormItem>
