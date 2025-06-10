@@ -37,6 +37,7 @@ import { useAuthStore } from "@/store/AuthStore";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import api from "@/utils/apiFetch";
+import Profile from "./profile";
 
 export default function AdminHome() {
   const [active, setActive] = useState("dashboard");
@@ -215,15 +216,14 @@ export default function AdminHome() {
                   align="start"
                   className="w-48 bg-white dark:bg-neutral-800 shadow-xl rounded-xl border border-neutral-200 dark:border-neutral-700"
                 >
-                  <DropdownMenuItem
-                    asChild
-                    className="cursor-pointer font-medium flex gap-2 items-center text-neutral-900 dark:text-white focus:bg-neutral-100 dark:focus:bg-neutral-700"
-                  >
-                    <Link href="/profile">
-                      <IconUser className="h-4 w-4 mr-2" />
-                      Profil
-                    </Link>
-                  </DropdownMenuItem>
+<DropdownMenuItem
+  className="cursor-pointer font-medium flex gap-2 items-center text-neutral-900 dark:text-white focus:bg-neutral-100 dark:focus:bg-neutral-700"
+  onClick={() => setActive("profile")}
+>
+  <IconUser className="h-4 w-4 mr-2" />
+  Profil
+</DropdownMenuItem>
+
                   <DropdownMenuItem
                     className="cursor-pointer font-medium flex gap-2 items-center text-red-600 focus:bg-red-100 dark:focus:bg-red-900"
                     onClick={logout}
@@ -248,7 +248,8 @@ export default function AdminHome() {
         {active === "reservations" && <Reservations />}
         {active === "cinema" && <Cinemas />}
         {active === "payments" && <Payments />}
-        {active === "settings" && <Settings />}
+        {active === "settings" && <Profile />}
+{active === "profile" && <Profile />}
       </main>
     </div>
   );
