@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { Sidebar, SidebarBody, SidebarLink } from "./ui/sidebar";
 import {
-  IconBrandTabler,
   IconSettings,
   IconUserBolt,
   IconVideo,
@@ -14,13 +13,13 @@ import {
   IconCreditCard,
   IconLogout,
   IconUser,
+  IconLayoutDashboard,
 } from "@tabler/icons-react";
 import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 import Dashboard from "./dashboard";
 import Users from "./users";
 import Movies from "./movies";
-import Settings from "./settings";
 import Genre from "./genre";
 import Image from "next/image";
 import Showtimes from "./showtime";
@@ -57,7 +56,7 @@ export default function AdminHome() {
     {
       id: "dashboard",
       label: "Dashboard",
-      icon: <IconBrandTabler className="h-5 w-5 rounded-4xl shrink-0" />,
+      icon: <IconLayoutDashboard className="h-5 w-5 rounded-4xl shrink-0" />,
     },
     {
       id: "users",
