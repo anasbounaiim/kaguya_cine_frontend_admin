@@ -19,7 +19,9 @@ export async function GET() {
     });
 
     return NextResponse.json(response);
+    
   } catch {
+    
     return NextResponse.json(
       { message: 'Erreur serveur!' },
       { status: 500 }
