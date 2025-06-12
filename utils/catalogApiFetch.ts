@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig } from "axios";
 
 const apiClient = axios.create({
-  baseURL: process.env.API_URL,
+  baseURL: process.env.CATALOG_API_URL,
   headers: {
     "Content-Type": "application/json",
   },
@@ -13,7 +13,7 @@ const buildQueryString = (params?: Record<string, string | number>) => {
   return '?' + new URLSearchParams(params as Record<string, string>).toString();
 };
 
-const api = {
+const apiCatalog = {
   get: (
     endpoint: string,
     params?: Record<string, string | number>,
@@ -44,4 +44,4 @@ const api = {
     apiClient.delete(endpoint, config).then((res) => res.data),
 };
 
-export default api;
+export default apiCatalog;

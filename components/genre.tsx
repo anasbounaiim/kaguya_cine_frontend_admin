@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -22,26 +21,31 @@ import {
 } from "./ui/dialog";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
-
-const initialGenres = [
-  { id: 1, name: "Action" },
-  { id: 2, name: "Comedy" },
-  { id: 3, name: "Drama" },
-  { id: 4, name: "Horror" },
-  { id: 5, name: "Science Fiction" },
-];
+import apiCatalog from "@/utils/catalogApiFetch";
 
 const Genres = () => {
-  const [genres, setGenres] = useState(initialGenres);
+  const [genres, setGenres] = useState<{ id: number; name: string }[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [genreToDelete, setGenreToDelete] = useState<number | null>(null);
   const [editingGenre, setEditingGenre] = useState<{ id: number; name: string } | null>(null);
-  const [search, setSearch] = useState(""); // <-- NEW
+  const [search, setSearch] = useState("");
+
+  const fetchGenres = async () => {
+    try {
+      const response = await apiCatalog.get('/api/genres');
+      setGenres(response);
+      console.log("Genres fetched successfully", response);
+    } catch (err: unknown) {
+      console.error("Genres fetched error", err)
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 1000);
-    return () => clearTimeout(timer);
+    fetchGenres();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleAddOrEditGenre = (e: React.FormEvent<HTMLFormElement>) => {
@@ -56,7 +60,7 @@ const Genres = () => {
       );
     } else {
       const newGenre = {
-        id: genres.length + 1,
+        id: genres.length > 0 ? Math.max(...genres.map(g => g.id)) + 1 : 1,
         name,
       };
       setGenres((prev) => [...prev, newGenre]);
@@ -133,7 +137,6 @@ const Genres = () => {
 
       <div className="rounded-xl border border-neutral-200 dark:border-neutral-700 p-4 md:p-8 bg-white dark:bg-neutral-900">
         <Table>
-          <TableCaption className="text-neutral-500">List of genres in the system.</TableCaption>
           <TableHeader>
             <TableRow>
               <TableHead>ID</TableHead>
@@ -142,46 +145,54 @@ const Genres = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {loading
-              ? Array.from({ length: 5 }).map((_, idx) => (
-                  <TableRow key={idx} className="animate-pulse">
-                    <TableCell><div className="h-4 w-8 bg-gray-200 dark:bg-neutral-700 rounded" /></TableCell>
-                    <TableCell><div className="h-4 w-48 bg-gray-200 dark:bg-neutral-700 rounded" /></TableCell>
-                    <TableCell className="text-right"><div className="h-4 w-20 ml-auto bg-gray-200 dark:bg-neutral-700 rounded" /></TableCell>
-                  </TableRow>
-                ))
-              : filteredGenres.map((genre) => (
-                  <TableRow key={genre.id}>
-                    <TableCell>{genre.id}</TableCell>
-                    <TableCell>{genre.name}</TableCell>
-                    <TableCell className="text-right flex justify-end gap-2">
-                      <Button size="sm" variant="ghost" onClick={() => handleEdit(genre)}>
-                        <Pencil className="w-4 h-4 mr-1" /> Edit
-                      </Button>
-                      <Dialog open={genreToDelete === genre.id} onOpenChange={(open) => setGenreToDelete(open ? genre.id : null)}>
-                        <DialogTrigger asChild>
-                          <Button size="sm" variant="ghost">
-                            <Trash2 className="w-4 h-4 mr-1 text-red-600" /> Delete
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent>
-                          <DialogHeader>
-                            <DialogTitle>Confirm Deletion</DialogTitle>
-                          </DialogHeader>
-                          <div className="py-4">Are you sure you want to delete "{genre.name}"?</div>
-                          <div className="flex justify-end gap-2">
-                            <DialogClose asChild>
-                              <Button variant="outline">Cancel</Button>
-                            </DialogClose>
-                            <DialogClose asChild>
-                              <Button variant="destructive" onClick={confirmDeleteGenre}>Delete</Button>
-                            </DialogClose>
-                          </div>
-                        </DialogContent>
-                      </Dialog>
-                    </TableCell>
-                  </TableRow>
-                ))}
+            {loading ? (
+              Array.from({ length: 5 }).map((_, idx) => (
+                <TableRow key={idx} className="animate-pulse">
+                  <TableCell><div className="h-4 w-8 bg-gray-200 dark:bg-neutral-700 rounded" /></TableCell>
+                  <TableCell><div className="h-4 w-48 bg-gray-200 dark:bg-neutral-700 rounded" /></TableCell>
+                  <TableCell className="text-right"><div className="h-4 w-20 ml-auto bg-gray-200 dark:bg-neutral-700 rounded" /></TableCell>
+                </TableRow>
+              ))
+            ) : filteredGenres.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={3} className="text-center text-neutral-400">
+                  No genres found.
+                </TableCell>
+              </TableRow>
+            ) : (
+              filteredGenres.map((genre) => (
+                <TableRow key={genre.id}>
+                  <TableCell>{genre.id}</TableCell>
+                  <TableCell>{genre.name}</TableCell>
+                  <TableCell className="text-right flex justify-end gap-2">
+                    <Button size="sm" variant="ghost" onClick={() => handleEdit(genre)}>
+                      <Pencil className="w-4 h-4 mr-1" /> Edit
+                    </Button>
+                    <Dialog open={genreToDelete === genre.id} onOpenChange={(open) => setGenreToDelete(open ? genre.id : null)}>
+                      <DialogTrigger asChild>
+                        <Button size="sm" variant="ghost">
+                          <Trash2 className="w-4 h-4 mr-1 text-red-600" /> Delete
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Confirm Deletion</DialogTitle>
+                        </DialogHeader>
+                        <div className="py-4">Are you sure you want to delete &quot;{genre.name}&quot;?</div>
+                        <div className="flex justify-end gap-2">
+                          <DialogClose asChild>
+                            <Button variant="outline">Cancel</Button>
+                          </DialogClose>
+                          <DialogClose asChild>
+                            <Button variant="destructive" onClick={confirmDeleteGenre}>Delete</Button>
+                          </DialogClose>
+                        </div>
+                      </DialogContent>
+                    </Dialog>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </div>

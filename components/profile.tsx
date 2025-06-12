@@ -22,7 +22,7 @@ export default function ProfilePage() {
           color: "#065f46",
         },
       });
-    } catch (err) {
+    } catch {
       toast.error("Erreur lors de l'envoi de l'e-mail de réinitialisation.", {
         duration: 5000,
         style: {
