@@ -22,6 +22,7 @@ import {
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import apiCatalog from "@/utils/catalogApiFetch";
+import toast from "react-hot-toast";
 
 const Genres = () => {
   const [genres, setGenres] = useState<{ id: number; name: string }[]>([]);
@@ -30,6 +31,7 @@ const Genres = () => {
   const [genreToDelete, setGenreToDelete] = useState<number | null>(null);
   const [editingGenre, setEditingGenre] = useState<{ id: number; name: string } | null>(null);
   const [search, setSearch] = useState("");
+  const [nameGenre, setNameGenre] = useState("");
 
   const fetchGenres = async () => {
     try {
@@ -45,43 +47,97 @@ const Genres = () => {
 
   useEffect(() => {
     fetchGenres();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleAddOrEditGenre = (e: React.FormEvent<HTMLFormElement>) => {
+  const AddGenre = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const form = e.currentTarget;
-    const formData = new FormData(form);
-    const name = formData.get("name") as string;
+    try {
+      const response = await apiCatalog.post('/api/genres', { name: nameGenre });
+      console.log("Genre added successfully", response);
+      setNameGenre("");
+      fetchGenres();
+      setIsModalOpen(false);
 
-    if (editingGenre) {
-      setGenres((prev) =>
-        prev.map((g) => (g.id === editingGenre.id ? { ...g, name } : g))
-      );
-    } else {
-      const newGenre = {
-        id: genres.length > 0 ? Math.max(...genres.map(g => g.id)) + 1 : 1,
-        name,
-      };
-      setGenres((prev) => [...prev, newGenre]);
+      toast.success("Genre added successfully",{
+        duration: 5000,
+        style: {
+          border: '1px solid #4ade80',
+          background: '#ecfdf5',
+          color: '#065f46',
+        }
+      })
+    } catch (err) {
+      console.error("Error adding genre", err);
+      toast.error("Error adding genre",{
+        duration: 5000,
+        style: {
+          border: '1px solid #4ade80',
+          background: '#ecfdf5',
+          color: '#065f46',
+        }
+      })
     }
+  };
 
+  const deleteGenre = async (id: number) => {
+    try {
+      await apiCatalog.delete(`/api/genres/${id}`);
+      fetchGenres();
+      toast.success("Genre deleted successfully",{
+        duration: 5000,
+        style: {
+          border: '1px solid #4ade80',
+          background: '#ecfdf5',
+          color: '#065f46',
+        }
+      })
+    } catch (err) {
+      console.error("Error deleting genre", err);
+      toast.error("Error deleting genre",{
+        duration: 5000,
+        style: {
+          border: '1px solid #4ade80',
+          background: '#ecfdf5',
+          color: '#065f46',
+        }
+      })
+    }
+  };
+
+  const updateGenre = async (id: number, name: string) => {
+  try {
+    await apiCatalog.put(`/api/genres/${id}`, { name });
+    fetchGenres();
     setIsModalOpen(false);
     setEditingGenre(null);
-    form.reset();
-  };
+    setNameGenre("");
+    toast.success("Genre updated successfully",{
+        duration: 5000,
+        style: {
+          border: '1px solid #4ade80',
+          background: '#ecfdf5',
+          color: '#065f46',
+        }
+      })
+  } catch (err) {
+    console.error("Error updating genre", err);
+    toast.error("Error updating genre",{
+        duration: 5000,
+        style: {
+          border: '1px solid #4ade80',
+          background: '#ecfdf5',
+          color: '#065f46',
+        }
+      })
+  }
+};
 
   const handleEdit = (genre: { id: number; name: string }) => {
     setEditingGenre(genre);
+    setNameGenre(genre.name);
     setIsModalOpen(true);
   };
 
-  const confirmDeleteGenre = () => {
-    if (genreToDelete !== null) {
-      setGenres((prev) => prev.filter((genre) => genre.id !== genreToDelete));
-      setGenreToDelete(null);
-    }
-  };
 
   // FILTER GENRES BASED ON SEARCH
   const filteredGenres = genres.filter((genre) =>
@@ -92,32 +148,45 @@ const Genres = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">Genres</h1>
+        
+
         <Dialog open={isModalOpen} onOpenChange={(open) => { setIsModalOpen(open); if (!open) setEditingGenre(null); }}>
           <DialogTrigger asChild>
-            <Button>
-              <Plus className="mr-2 h-4 w-4" />
-              {editingGenre ? "Edit Genre" : "Add Genre"}
+            <Button className="text-white bg-red-700 cursor-pointer shadow-md" variant="default">
+              <Plus className="h-4 w-4" />
+                Add Genre
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>{editingGenre ? "Edit Genre" : "Add New Genre"}</DialogTitle>
+              <DialogTitle className="text-red-600 font-bold text-xl">{editingGenre ? "Edit Genre" : "Add New Genre"}</DialogTitle>
             </DialogHeader>
-            <form onSubmit={handleAddOrEditGenre} className="space-y-4">
+            <form 
+             onSubmit={e => {
+              if (editingGenre) {
+                e.preventDefault();
+                updateGenre(editingGenre.id, nameGenre);
+              } else {
+                AddGenre(e);
+              }
+             }}
+             className="space-y-4">
               <div>
                 <Label htmlFor="name">Genre Name</Label>
                 <Input
                   name="name"
+                  className="bg-white text-black mt-1"
                   id="name"
                   required
-                  defaultValue={editingGenre ? editingGenre.name : ""}
+                  value={nameGenre}
+                  onChange={e => setNameGenre(e.target.value)}
                 />
               </div>
               <div className="flex justify-end gap-2 pt-4">
                 <DialogClose asChild>
-                  <Button type="button" variant="outline">Cancel</Button>
+                  <Button className="cursor-pointer" type="button" variant="outline">Cancel</Button>
                 </DialogClose>
-                <Button type="submit">Save</Button>
+                <Button className="bg-red-700 cursor-pointer hover:bg-red-800 px-6" type="submit">Save</Button>
               </div>
             </form>
           </DialogContent>
@@ -135,7 +204,7 @@ const Genres = () => {
         />
       </div>
 
-      <div className="rounded-xl border border-neutral-200 dark:border-neutral-700 p-4 md:p-8 bg-white dark:bg-neutral-900">
+      <div className="rounded-3xl border-0 border-b-2 border-red-700 p-4 md:p-8 bg-black">
         <Table>
           <TableHeader>
             <TableRow>
@@ -176,15 +245,24 @@ const Genres = () => {
                       </DialogTrigger>
                       <DialogContent>
                         <DialogHeader>
-                          <DialogTitle>Confirm Deletion</DialogTitle>
+                          <DialogTitle className="text-red-600 font-bold text-xl">Confirm Deletion</DialogTitle>
                         </DialogHeader>
                         <div className="py-4">Are you sure you want to delete &quot;{genre.name}&quot;?</div>
                         <div className="flex justify-end gap-2">
                           <DialogClose asChild>
-                            <Button variant="outline">Cancel</Button>
+                            <Button className="cursor-pointer" variant="outline">Cancel</Button>
                           </DialogClose>
                           <DialogClose asChild>
-                            <Button variant="destructive" onClick={confirmDeleteGenre}>Delete</Button>
+                            <Button
+                              className="bg-red-700 cursor-pointer hover:bg-red-800 px-6"
+                              variant="destructive"
+                              onClick={() => {
+                                deleteGenre(genre.id);
+                                setGenreToDelete(null);
+                              }}
+                            >
+                              Delete
+                            </Button>
                           </DialogClose>
                         </div>
                       </DialogContent>
