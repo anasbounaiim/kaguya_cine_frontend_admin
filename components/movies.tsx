@@ -22,6 +22,8 @@ import {
 } from "./ui/dialog";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
+import apiCatalog from "@/utils/catalogApiFetch";
+import Image from "next/image";
 
 const MOVIES_PER_PAGE = 5;
 
@@ -46,21 +48,19 @@ const Movies = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
 
-  const fetchMovies = async () => {
+  const fetchMovies = React.useCallback(async () => {
     try {
-      const res = await fetch(`/api/movies?search=${search}&page=${currentPage}&size=${MOVIES_PER_PAGE}`);
-      const text = await res.text();
-      console.log("Raw API response:", text);
-      const data = JSON.parse(text);
-      setMovies(data.content || []);
+      const res = await apiCatalog.get(`/api/movies?search=${search}&page=${currentPage}&size=${MOVIES_PER_PAGE}`);
+      console.log("Raw API response:", res);
+      setMovies(res.content);
     } catch (err) {
       console.error("❌ Failed to load or parse movies:", err);
     }
-  };
+  }, [search, currentPage]);
 
   useEffect(() => {
     fetchMovies();
-  }, [search, currentPage]);
+  }, [fetchMovies]);
 
   const handleAddMovie = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -107,8 +107,8 @@ const Movies = () => {
         <h1 className="text-3xl font-bold">Movies</h1>
         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
           <DialogTrigger asChild>
-            <Button>
-              <Plus className="mr-2 h-4 w-4" />
+            <Button className="text-white bg-red-700 cursor-pointer shadow-md" variant="default">
+              <Plus className="h-4 w-4" />
               Add Movie
             </Button>
           </DialogTrigger>
@@ -116,7 +116,7 @@ const Movies = () => {
             <DialogHeader>
               <DialogTitle>Add New Movie</DialogTitle>
             </DialogHeader>
-            <form onSubmit={handleAddMovie} className="space-y-4">
+            <form onSubmit={handleAddMovie} className="grid grid-cols-2 gap-6">
               <div><Label htmlFor="title">Title</Label><Input name="title" id="title" required /></div>
               <div><Label htmlFor="originalTitle">Original Title</Label><Input name="originalTitle" id="originalTitle" required /></div>
               <div><Label htmlFor="releaseDate">Release Date</Label><Input type="date" name="releaseDate" id="releaseDate" required /></div>
@@ -151,7 +151,7 @@ const Movies = () => {
         </span>
       </div>
 
-      <div className="rounded-xl border border-neutral-200 dark:border-neutral-700 p-4 md:p-8 bg-white dark:bg-neutral-900">
+      <div className="rounded-3xl border-0 border-b-2 border-red-700 p-4 md:p-8 bg-black">
         <Table>
           <TableCaption className="text-neutral-500">List of movies in the system.</TableCaption>
           <TableHeader>
@@ -168,7 +168,7 @@ const Movies = () => {
             {currentMovies.map((movie) => (
               <TableRow key={movie.movieId}>
                 <TableCell>
-                  <img src={movie.posterUrl} alt={movie.title} className="w-12 h-16 object-cover rounded" />
+                  <Image src={movie.posterUrl} alt={movie.title} width={48} height={48} className="w-12 h-16 object-cover rounded" />
                 </TableCell>
                 <TableCell>{movie.title}</TableCell>
                 <TableCell>

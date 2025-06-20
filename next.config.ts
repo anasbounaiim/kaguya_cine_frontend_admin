@@ -14,6 +14,10 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'ui-avatars.com',
       },
+      {
+        protocol: 'http',
+        hostname: 'example.com',
+      },
     ],
     // Uncomment below ONLY if you want to allow SVG avatars (use with caution!)
     // dangerouslyAllowSVG: true,
