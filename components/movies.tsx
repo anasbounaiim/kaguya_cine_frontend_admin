@@ -33,6 +33,9 @@ import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { Calendar } from "./ui/calendar";
 import VersionsSelectInput from "./ui/VersionsSelectInput";
+import GenresMultiSelectInput from "./ui/GenresMultiSelectInput";
+import { formatDateToYMD, parseDateStringToLocal } from "@/utils/date";
+import toast from "react-hot-toast";
 
 const MOVIES_PER_PAGE = 5;
 
@@ -48,13 +51,13 @@ const Movies = () => {
       title: "",
       originalTitle: "",
       releaseDate: "",
-      durationMin: 0,
+      durationMin: "",
       synopsis: "",
       posterUrl: "",
       trailerUrl: "",
       ageRating: "",
       genres: [],
-      versions: [{ language: "", format: "" }],
+      versions: [],
       private: false,
     }
   });
@@ -64,6 +67,23 @@ const Movies = () => {
   const [editingMovie, setEditingMovie] = useState<Movie | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState("");
+
+  const [genresList, setGenresList] = useState<{ genreId: string; name: string }[]>([]);
+
+  const fetchGenres = async () => {
+      try {
+        const response = await apiCatalog.get('/api/genres');
+        setGenresList(response);
+        console.log("Genres fetched successfully", response);
+      } catch (err: unknown) {
+        console.error("Genres fetched error", err)
+      }
+    };
+  
+    useEffect(() => {
+      fetchGenres();
+    }, []);
+
 
   // Load movies (paginated)
   const fetchMovies = React.useCallback(async () => {
@@ -92,27 +112,44 @@ const Movies = () => {
   }, [editingMovie, form]);
 
   // Add or Edit movie
-  const handleSubmitMovie = async (data: MovieBase) => {
+  async function onSubmit(values: z.infer<typeof MovieFormSchema>) {
     try {
-      // Pour le POST : movieId doit être absent du body !
-      const bodyToSend = { ...data };
+      console.log("Values :", values)
+      const bodyToSend = { ...values };
       if (editingMovie) {
-        bodyToSend.movieId = editingMovie.movieId; // Ajoute movieId pour la mise à jour
+        bodyToSend.movieId = editingMovie.movieId;
       } else {
-        // Type assertion to allow delete on possibly undefined property
-        delete (bodyToSend as { movieId?: string }).movieId; // Assure que movieId n'est pas envoyé lors de la création
+        delete (bodyToSend as { movieId?: string }).movieId;
       }
       if (editingMovie) {
         await apiCatalog.put(`/api/movies/${editingMovie.movieId}`, bodyToSend);
       } else {
         await apiCatalog.post("/api/movies", bodyToSend);
       }
+
+      toast.success("Movie added successfully",{
+        duration: 5000,
+        style: {
+          border: '1px solid #4ade80',
+          background: '#ecfdf5',
+          color: '#065f46',
+        }
+      })
+
       setIsModalOpen(false);
       setEditingMovie(null);
       fetchMovies();
       form.reset();
     } catch (err) {
       console.error("Error submitting movie:", err);
+      toast.error("Error adding movie",{
+        duration: 5000,
+        style: {
+          border: '1px solid #4ade80',
+          background: '#ecfdf5',
+          color: '#065f46',
+        }
+      })
     }
   };
 
@@ -122,13 +159,13 @@ const Movies = () => {
       title: "",
       originalTitle: "",
       releaseDate: "",
-      durationMin: 0,
+      durationMin: "",
       synopsis: "",
       posterUrl: "",
       trailerUrl: "",
       ageRating: "",
       genres: [],
-      versions: [{ language: "", format: "" }],
+      versions: [],
       private: false,
     });
     setIsModalOpen(true);
@@ -175,7 +212,7 @@ const Movies = () => {
             </DialogHeader>
 
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(handleSubmitMovie)} className="grid grid-cols-2 gap-6">
+              <form onSubmit={form.handleSubmit(onSubmit, (errors) => { console.log("Validation Errors:", errors); })} className="grid grid-cols-2 gap-6">
                 
                 <FormField
                   control={form.control}
@@ -188,7 +225,7 @@ const Movies = () => {
                           className="bg-white text-black mt-1"
                           {...field} />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-red-500" />
                     </FormItem>
                   )}
                 />
@@ -202,24 +239,10 @@ const Movies = () => {
                       <FormControl>
                         <Input className="bg-white text-black mt-1" {...field} />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-red-500" />
                     </FormItem>
                   )}
                 />
-                
-                {/* <FormField
-                  control={form.control}
-                  name="releaseDate"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Release Date</FormLabel>
-                      <FormControl>
-                        <Input className="bg-white text-black mt-1" type="date" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                /> */}
 
                 <FormField
                   control={form.control}
@@ -231,17 +254,15 @@ const Movies = () => {
                         <PopoverTrigger asChild>
                           <FormControl>
                             <Button
-                              variant={"outline"}
+                              variant="outline"
                               className={cn(
-                                "pl-3 text-left font-normal bg-white text-black mt-1",
+                                "pl-3 text-left font-normal bg-white text-black mt-1 cursor-pointer",
                                 !field.value && "text-muted-foreground"
                               )}
                             >
-                              {field.value ? (
-                                format(field.value, "yyyy-MM-dd")
-                              ) : (
-                                <span className="text-gray-500">Pick a date</span>
-                              )}
+                              {field.value && parseDateStringToLocal(field.value)
+                                ? format(parseDateStringToLocal(field.value) as Date, "yyyy-MM-dd")
+                                : <span className="text-gray-500">Pick a date</span>}
                               <CalendarIcon className="ml-auto h-4 w-4 opacity-50 text-black" />
                             </Button>
                           </FormControl>
@@ -249,19 +270,16 @@ const Movies = () => {
                         <PopoverContent className="w-auto p-0 bg-white text-black" align="start">
                           <Calendar
                             mode="single"
-                            selected={field.value ? new Date(field.value) : undefined}
-                            onSelect={date => {
-                              field.onChange(date ? date.toISOString().split("T")[0] : "");
-                              console.log("Selected date:", date?.toISOString().split("T")[0]);
-                            }}
-                            disabled={(date) =>
+                            selected={parseDateStringToLocal(field.value)}
+                            onSelect={date => field.onChange(formatDateToYMD(date))}
+                            disabled={date =>
                               date > new Date() || date < new Date("1900-01-01")
                             }
                             captionLayout="dropdown"
                           />
                         </PopoverContent>
                       </Popover>
-                      <FormMessage />
+                      <FormMessage className="text-red-500" />
                     </FormItem>
                   )}
                 />
@@ -275,7 +293,7 @@ const Movies = () => {
                       <FormControl>
                         <Input className="bg-white text-black mt-1" type="number" {...field} />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-red-500" />
                     </FormItem>
                   )}
                 />
@@ -289,7 +307,7 @@ const Movies = () => {
                       <FormControl>
                         <Input className="bg-white text-black mt-1" {...field} />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-red-500" />
                     </FormItem>
                   )}
                 />
@@ -303,7 +321,7 @@ const Movies = () => {
                       <FormControl>
                         <Input className="bg-white text-black mt-1" {...field} />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-red-500" />
                     </FormItem>
                   )}
                 />
@@ -317,7 +335,7 @@ const Movies = () => {
                       <FormControl>
                         <Input className="bg-white text-black mt-1" {...field} />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-red-500" />
                     </FormItem>
                   )}
                 />
@@ -331,7 +349,7 @@ const Movies = () => {
                       <FormControl>
                         <Input className="bg-white text-black mt-1" {...field} />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-red-500" />
                     </FormItem>
                   )}
                 />
@@ -343,15 +361,13 @@ const Movies = () => {
                     <FormItem>
                       <FormLabel>Genres</FormLabel>
                       <FormControl>
-                        <Input
-                          className="bg-white text-black mt-1"
-                          {...field}
-                          value={Array.isArray(field.value) ? field.value.join(", ") : field.value}
-                          onChange={e => field.onChange(e.target.value.split(",").map(v => v.trim()))}
-                          placeholder="Action, Drama"
+                        <GenresMultiSelectInput
+                          options={genresList}
+                          value={field.value || []}
+                          onChange={field.onChange}
                         />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-red-500" />
                     </FormItem>
                   )}
                 />
@@ -368,7 +384,7 @@ const Movies = () => {
                           onChange={field.onChange}
                         />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-red-500" />
                     </FormItem>
                   )}
                 />

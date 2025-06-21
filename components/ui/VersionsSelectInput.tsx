@@ -78,21 +78,21 @@ export default function VersionsSelectInput({
       </div>
       <div className="flex flex-wrap gap-2">
         {(value || []).map((v, idx) => (
-            <>
-            {idx > 0 && (
-          <span
-            key={idx}
-            className="inline-flex items-center bg-gray-200 text-gray-800 px-2 py-1 rounded-full text-xs"
-          >
+          <span key={idx}>
+            {idx >= 0 && (
+              <span
+                key={idx}
+                className="inline-flex items-center border border-green-800 bg-green-100 text-green-800 px-2 py-1 font-semibold rounded-full text-sm"
+              >
             
-                  {v.language}-{v.format}
-                  <X
-                    className="ml-1 h-4 w-4 cursor-pointer"
-                    onClick={() => removeVersion(idx)}
-                  />
-                  </span>
-                )}
-            </>
+                {v.language}-{v.format}
+                <X
+                  className="ml-1 h-4 w-4 cursor-pointer"
+                  onClick={() => removeVersion(idx)}
+                />
+                </span>
+              )}
+          </span>
         ))}
       </div>
     </div>

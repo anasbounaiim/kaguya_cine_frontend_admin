@@ -64,14 +64,14 @@ export default function AdminHome() {
       icon: <IconUserBolt className="h-5 w-5 rounded-4xl shrink-0" />,
     },
     {
-      id: "movies",
-      label: "Films",
-      icon: <IconVideo className="h-5 w-5 rounded-4xl shrink-0" />,
-    },
-    {
       id: "genre",
       label: "Genres",
       icon: <IconCategory className="h-5 w-5 rounded-4xl shrink-0" />,
+    },
+    {
+      id: "movies",
+      label: "Films",
+      icon: <IconVideo className="h-5 w-5 rounded-4xl shrink-0" />,
     },
     {
       id: "showtimes",
@@ -241,8 +241,8 @@ export default function AdminHome() {
       <main className="flex-1 py-5 px-6 overflow-auto bg-white dark:bg-neutral-800">
         {active === "dashboard" && <Dashboard />}
         {active === "users" && <Users />}
-        {active === "movies" && <Movies />}
         {active === "genre" && <Genre />}
+        {active === "movies" && <Movies />}
         {active === "showtimes" && <Showtimes />}
         {active === "reservations" && <Reservations />}
         {active === "cinema" && <Cinemas />}
