@@ -35,11 +35,17 @@ export default function VersionsSelectInput({
 
   const addVersion = () => {
     if (language && format) {
-      onChange([...(value || []), { language, format }]);
+      // Filtrer tout ce qui a déjà ce couple (language + format)
+      const filtered = value.filter(v => !(v.language === language && v.format === format));
+      // Ajouter la version unique à la fin
+      onChange([...filtered, { language, format }]);
       setLanguage("");
       setFormat("");
     }
   };
+
+
+
 
   const removeVersion = (idx: number) => {
     onChange(value.filter((_, i) => i !== idx));

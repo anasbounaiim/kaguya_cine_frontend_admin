@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 export const MovieFormSchema = z.object({
 
-    movieId: z.string().uuid({ message: 'Invalid movie ID format.' }).optional(),
+    movieId: z.union([z.string(), z.number()]).optional(),
     title: z.string().min(1, { message: 'Title is required.' }).max(100, { message: 'Title must be at most 100 characters long.' }),
     originalTitle: z.string().min(1, { message: 'Original title is required.' }).max(100, { message: 'Original title must be at most 100 characters long.' }),
     releaseDate: z.string().refine(date => !isNaN(Date.parse(date)), {
