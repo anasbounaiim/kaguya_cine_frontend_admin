@@ -1,109 +1,109 @@
 "use client";
 
-import React, { useState } from "react";
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import React, { useEffect, useState } from "react";
+import {
+  Table, TableBody, TableCell, TableHead, TableHeader, TableRow
+} from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog";
+import { Pencil, Trash2, Eye } from "lucide-react";
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import apiVenue from "@/utils/venueApiFetch";
+import toast from "react-hot-toast";
+import {
+  Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger
+} from "@/components/ui/sheet";
+import { TheaterSeatsPlanEditable } from "./Seats/TheaterSeatsPlan";
 
-const initialCinemas = [
-  {
-    cinemaId: 1,
-    name: "Boyle and Sons",
-    city: "New Matthewburgh",
-    address: "4729 Wood Stream Apt. 609",
-    theaters: [],
-  },
-  {
-    cinemaId: 2,
-    name: "Adams-Gregory",
-    city: "Greeneland",
-    address: "884 Elizabeth Via",
-    theaters: [
-      {
-        theaterId: 1,
-        name: "Salle 1",
-        capacity: 120,
-        techFormat: "IMAX",
-      },
-      {
-        theaterId: 2,
-        name: "Salle 2",
-        capacity: 95,
-        techFormat: "Dolby",
-      },
-    ],
-  },
-];
+// --- Types ---
+interface Seat {
+  seatId: number;
+  rowLabel: string;
+  seatNumber: number;
+  seatType: string;
+}
+interface Theater {
+  theaterId: number;
+  name: string;
+  capacity: number;
+  techFormat: string;
+  seats?: Seat[];
+}
+interface Cinema {
+  cinemaId: number;
+  name: string;
+  city: string;
+  address: string;
+}
+interface CinemaDetails extends Cinema {
+  theaters: Theater[];
+}
 
-export default function Cinema() {
-  const [cinemas, setCinemas] = useState(initialCinemas);
-  const [cinemaDialogOpen, setCinemaDialogOpen] = useState(false);
-  const [salleDialogOpen, setSalleDialogOpen] = useState<number | null>(null);
-
-  // For controlled inputs in dialogs
-  const [newCinema, setNewCinema] = useState({ name: "", city: "", address: "" });
-  const [newSalle, setNewSalle] = useState({ name: "", capacity: "", techFormat: "" });
-
-  // --- NEW: Search state ---
+const CinemaPage = () => {
+  // State
+  const [cinemas, setCinemas] = useState<Cinema[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingCinema, setEditingCinema] = useState<Cinema | null>(null);
+  const [cinemaToDelete, setCinemaToDelete] = useState<number | null>(null);
   const [search, setSearch] = useState("");
+  const [cinemaForm, setCinemaForm] = useState({ name: "", city: "", address: "" });
 
-  // Add cinema
-  function handleAddCinema(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setCinemas((prev) => [
-      ...prev,
-      {
-        cinemaId: prev.length + 1,
-        ...newCinema,
-        theaters: [],
-      },
-    ]);
-    setNewCinema({ name: "", city: "", address: "" });
-    setCinemaDialogOpen(false);
-  }
+  // --- Sheet Détail & salle courante ---
+  const [detailSheetOpen, setDetailSheetOpen] = useState(false);
+  const [cinemaDetails, setCinemaDetails] = useState<CinemaDetails | null>(null);
+  const [loadingDetails, setLoadingDetails] = useState(false);
 
-  // Add salle
-  function handleAddSalle(e: React.FormEvent<HTMLFormElement>, cinemaId: number) {
-    e.preventDefault();
-    setCinemas((prev) =>
-      prev.map((cinema) =>
-        cinema.cinemaId === cinemaId
-          ? {
-              ...cinema,
-              theaters: [
-                ...cinema.theaters,
-                {
-                  theaterId: cinema.theaters.length + 1,
-                  ...newSalle,
-                  capacity: Number(newSalle.capacity),
-                },
-              ],
-            }
-          : cinema
-      )
-    );
-    setNewSalle({ name: "", capacity: "", techFormat: "" });
-    setSalleDialogOpen(null);
-  }
+  // Fetch list
+  const fetchCinemas = async () => {
+    setLoading(true);
+    try {
+      const response = await apiVenue.get("/api/cinemas");
+      setCinemas(response);
+    } catch {
+      setCinemas([]);
+      toast.error("Erreur lors du chargement des cinémas");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  // --- NEW: Filter cinemas by search ---
+  useEffect(() => {
+    fetchCinemas();
+  }, []);
+
+  // Fetch details on demand
+  const fetchCinemaDetails = async (cinemaId: number) => {
+    setLoadingDetails(true);
+    try {
+      const details = await apiVenue.get(`/api/cinemas/${cinemaId}`);
+      setCinemaDetails(details);
+    } catch {
+      setCinemaDetails(null);
+      toast.error("Erreur lors du chargement du détail");
+    }
+    setLoadingDetails(false);
+  };
+
+  // --- Filtrage search ---
   const filteredCinemas = cinemas.filter((cinema) => {
-    const query = search.toLowerCase();
+    const q = search.toLowerCase();
     return (
-      cinema.name.toLowerCase().includes(query) ||
-      cinema.city.toLowerCase().includes(query) ||
-      cinema.address.toLowerCase().includes(query)
+      cinema.name.toLowerCase().includes(q) ||
+      cinema.city.toLowerCase().includes(q) ||
+      cinema.address.toLowerCase().includes(q)
     );
   });
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto py-8">
+    <div className="space-y-6">
+      {/* --- Header & bouton --- */}
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">Cinémas</h1>
-        <Dialog open={cinemaDialogOpen} onOpenChange={setCinemaDialogOpen}>
+        <Dialog open={isModalOpen} onOpenChange={(open) => { setIsModalOpen(open); if (!open) setEditingCinema(null); }}>
           <DialogTrigger asChild>
             <Button className="bg-red-600 hover:bg-red-700 text-white rounded-xl">
               + Add Cinema
@@ -111,26 +111,34 @@ export default function Cinema() {
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Add New Cinema</DialogTitle>
+              <DialogTitle>{editingCinema ? "Edit Cinema" : "Add New Cinema"}</DialogTitle>
             </DialogHeader>
-            <form className="space-y-4" onSubmit={handleAddCinema}>
+            <form
+              onSubmit={e => {
+                e.preventDefault();
+                // TODO: Ajoute ici le POST ou PUT via apiVenue
+                setIsModalOpen(false);
+                toast.success(editingCinema ? "Cinéma modifié (fictif)" : "Cinéma ajouté (fictif)");
+                fetchCinemas();
+                setCinemaForm({ name: "", city: "", address: "" });
+              }}
+              className="space-y-4"
+            >
               <div>
                 <Label htmlFor="cinemaName">Name</Label>
-                <Input id="cinemaName" value={newCinema.name} onChange={(e) => setNewCinema((nc) => ({ ...nc, name: e.target.value }))} required />
+                <Input id="cinemaName" value={cinemaForm.name} onChange={e => setCinemaForm(cf => ({ ...cf, name: e.target.value }))} required />
               </div>
               <div>
                 <Label htmlFor="cinemaCity">City</Label>
-                <Input id="cinemaCity" value={newCinema.city} onChange={(e) => setNewCinema((nc) => ({ ...nc, city: e.target.value }))} required />
+                <Input id="cinemaCity" value={cinemaForm.city} onChange={e => setCinemaForm(cf => ({ ...cf, city: e.target.value }))} required />
               </div>
               <div>
                 <Label htmlFor="cinemaAddress">Address</Label>
-                <Input id="cinemaAddress" value={newCinema.address} onChange={(e) => setNewCinema((nc) => ({ ...nc, address: e.target.value }))} required />
+                <Input id="cinemaAddress" value={cinemaForm.address} onChange={e => setCinemaForm(cf => ({ ...cf, address: e.target.value }))} required />
               </div>
               <div className="flex justify-end gap-2 pt-4">
                 <DialogClose asChild>
-                  <Button type="button" variant="outline">
-                    Cancel
-                  </Button>
+                  <Button type="button" variant="outline">Cancel</Button>
                 </DialogClose>
                 <Button type="submit">Save</Button>
               </div>
@@ -139,100 +147,150 @@ export default function Cinema() {
         </Dialog>
       </div>
 
-      {/* --- NEW: Search input --- */}
+      {/* --- Search --- */}
       <div>
         <Input
           placeholder="Search cinemas by name, city, or address..."
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={e => setSearch(e.target.value)}
           className="w-full md:w-80 rounded-xl border border-neutral-700 bg-neutral-900 text-white placeholder:text-neutral-400 mb-2"
         />
       </div>
 
-      <div className="grid gap-8 md:grid-cols-2">
-        {filteredCinemas.length === 0 ? (
-          <div className="col-span-2 text-center text-neutral-400 py-8">
-            No cinemas match your search.
-          </div>
-        ) : (
-          filteredCinemas.map((cinema) => (
-            <Card key={cinema.cinemaId} className="rounded-2xl shadow-xl border border-neutral-700 bg-neutral-900 text-white">
-              <CardContent className="p-6 space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h2 className="text-xl font-semibold">{cinema.name}</h2>
-                    <div className="text-sm text-neutral-400">{cinema.city}</div>
-                    <div className="text-xs text-neutral-500">{cinema.address}</div>
-                  </div>
-                  <Dialog open={salleDialogOpen === cinema.cinemaId} onOpenChange={(v) => setSalleDialogOpen(v ? cinema.cinemaId : null)}>
-                    <DialogTrigger asChild>
-                      <Button className="bg-red-700 text-white rounded-xl">+ Add Salle</Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                      <DialogHeader>
-                        <DialogTitle>Add New Salle</DialogTitle>
-                      </DialogHeader>
-                      <form className="space-y-4" onSubmit={(e) => handleAddSalle(e, cinema.cinemaId)}>
-                        <div>
-                          <Label htmlFor="salleName">Name</Label>
-                          <Input id="salleName" value={newSalle.name} onChange={(e) => setNewSalle((ns) => ({ ...ns, name: e.target.value }))} required />
-                        </div>
-                        <div>
-                          <Label htmlFor="salleCapacity">Capacity</Label>
-                          <Input id="salleCapacity" type="number" value={newSalle.capacity} onChange={(e) => setNewSalle((ns) => ({ ...ns, capacity: e.target.value }))} required />
-                        </div>
-                        <div>
-                          <Label htmlFor="salleFormat">Tech Format</Label>
-                          <Input id="salleFormat" value={newSalle.techFormat} onChange={(e) => setNewSalle((ns) => ({ ...ns, techFormat: e.target.value }))} required />
-                        </div>
-                        <div className="flex justify-end gap-2 pt-4">
+      {/* --- Table --- */}
+      <div className="rounded-3xl border-0 border-b-2 border-red-700 p-4 md:p-8 bg-black">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>ID</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>City</TableHead>
+              <TableHead>Address</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {loading ? (
+              Array.from({ length: 5 }).map((_, idx) => (
+                <TableRow key={idx} className="animate-pulse">
+                  <TableCell><div className="h-4 w-8 bg-gray-200 dark:bg-neutral-700 rounded" /></TableCell>
+                  <TableCell><div className="h-4 w-32 bg-gray-200 dark:bg-neutral-700 rounded" /></TableCell>
+                  <TableCell><div className="h-4 w-24 bg-gray-200 dark:bg-neutral-700 rounded" /></TableCell>
+                  <TableCell><div className="h-4 w-48 bg-gray-200 dark:bg-neutral-700 rounded" /></TableCell>
+                  <TableCell className="text-right"><div className="h-4 w-20 ml-auto bg-gray-200 dark:bg-neutral-700 rounded" /></TableCell>
+                </TableRow>
+              ))
+            ) : filteredCinemas.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={5} className="text-center text-neutral-400">
+                  Aucun cinéma trouvé.
+                </TableCell>
+              </TableRow>
+            ) : (
+              filteredCinemas.map((cinema) => (
+                <TableRow key={cinema.cinemaId}>
+                  <TableCell>{cinema.cinemaId}</TableCell>
+                  <TableCell>{cinema.name}</TableCell>
+                  <TableCell>{cinema.city}</TableCell>
+                  <TableCell>{cinema.address}</TableCell>
+                  <TableCell className="text-right flex justify-end gap-2">
+                    {/* --- Edit --- */}
+                    <Button size="sm" variant="ghost" 
+                    // onClick={() => handleEdit(cinema)}
+                    >
+                      <Pencil className="w-4 h-4 mr-1" /> Edit
+                    </Button>
+                    {/* --- Delete --- */}
+                    <Dialog open={cinemaToDelete === cinema.cinemaId} onOpenChange={(open) => setCinemaToDelete(open ? cinema.cinemaId : null)}>
+                      <DialogTrigger asChild>
+                        <Button size="sm" variant="ghost">
+                          <Trash2 className="w-4 h-4 mr-1 text-red-600" /> Delete
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle className="text-red-600 font-bold text-xl">Confirm Deletion</DialogTitle>
+                        </DialogHeader>
+                        <div className="py-4">Delete &quot;{cinema.name}&quot;?</div>
+                        <div className="flex justify-end gap-2">
                           <DialogClose asChild>
-                            <Button type="button" variant="outline">
-                              Cancel
+                            <Button variant="outline">Cancel</Button>
+                          </DialogClose>
+                          <DialogClose asChild>
+                            <Button
+                              className="bg-red-700 hover:bg-red-800 px-6"
+                              variant="destructive"
+                            //   onClick={() => handleDelete(cinema.cinemaId)}
+                            >
+                              Delete
                             </Button>
                           </DialogClose>
-                          <Button type="submit">Save</Button>
                         </div>
-                      </form>
-                    </DialogContent>
-                  </Dialog>
-                </div>
-                <Table>
-                  <TableCaption className="text-neutral-500">Salles for this cinema</TableCaption>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Name</TableHead>
-                      <TableHead>Capacity</TableHead>
-                      <TableHead>Format</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {cinema.theaters.length === 0 ? (
-                      <TableRow>
-                        <TableCell colSpan={3} className="text-center text-neutral-400">
-                          No salles yet.
-                        </TableCell>
-                      </TableRow>
-                    ) : (
-                      cinema.theaters.map((theater, idx) => (
-                        <TableRow key={idx}>
-                          <TableCell>{theater.name}</TableCell>
-                          <TableCell>{theater.capacity}</TableCell>
-                          <TableCell>{theater.techFormat}</TableCell>
-                        </TableRow>
-                      ))
-                    )}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          ))
-        )}
+                      </DialogContent>
+                    </Dialog>
+                    {/* --- Details avec Sheet --- */}
+                    <Sheet open={detailSheetOpen && cinemaDetails?.cinemaId === cinema.cinemaId} onOpenChange={(open) => {
+                      setDetailSheetOpen(open);
+                      if (!open) setCinemaDetails(null);
+                    }}>
+                      <SheetTrigger asChild>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={async () => {
+                            setDetailSheetOpen(true);
+                            await fetchCinemaDetails(cinema.cinemaId);
+                          }}
+                        >
+                          <Eye className="w-4 h-4 mr-1 text-green-500" /> Details
+                        </Button>
+                      </SheetTrigger>
+                      <SheetContent side="right" className="md:max-w-xl w-full px-8 bg-neutral-900 border-l-4 border-red-950 overflow-y-auto">
+                        <SheetHeader className="px-0 py-4">
+                          <SheetTitle>
+                            <div className="text-red-600 font-bold text-2xl">{cinemaDetails?.name}</div>
+                            <div className="text-sm text-neutral-400">{cinemaDetails?.city}, {cinemaDetails?.address}</div>
+                          </SheetTitle>
+                        </SheetHeader>
+                        {loadingDetails ? (
+                          <div className="p-8 text-center">Chargement…</div>
+                        ) : cinemaDetails ? (
+                          <div>
+                            {cinemaDetails.theaters?.length ? (
+                              cinemaDetails.theaters.map((theater, idx) => (
+                                <div key={idx} className="mb-6 rounded-3xl p-4 bg-black">
+                                  <div className="flex items-center justify-between">
+                                    <div>
+                                      <div className="font-semibold text-lg mb-2">{theater.name} ({theater.techFormat}) - {theater.capacity} places</div>
+                                    </div>
+                                  </div>
+                                  
+                                  <TheaterSeatsPlanEditable
+                                    seats={theater.seats ?? []}
+                                    readOnly
+                                    theaterFormat={theater.techFormat}
+                                  />
 
-
-
-
+                                </div>
+                              ))
+                            ) : (
+                              <div>Aucune salle</div>
+                            )}
+                          </div>
+                        ) : (
+                          <div>Erreur de chargement ou pas de détails.</div>
+                        )}
+                      </SheetContent>
+                    </Sheet>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
       </div>
     </div>
   );
-}
+};
+
+export default CinemaPage;

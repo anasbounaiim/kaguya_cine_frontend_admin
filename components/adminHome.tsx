@@ -64,6 +64,11 @@ export default function AdminHome() {
       icon: <IconUserBolt className="h-5 w-5 rounded-4xl shrink-0" />,
     },
     {
+      id: "cinema",
+      label: "Cinéma",
+      icon: <IconVideo className="h-5 w-5 rounded-4xl shrink-0" />,
+    },
+    {
       id: "genre",
       label: "Genres",
       icon: <IconCategory className="h-5 w-5 rounded-4xl shrink-0" />,
@@ -82,11 +87,6 @@ export default function AdminHome() {
       id: "reservations",
       label: "Réservations",
       icon: <IconTicket className="h-5 w-5 rounded-4xl shrink-0" />,
-    },
-    {
-      id: "cinema",
-      label: "Cinéma",
-      icon: <IconVideo className="h-5 w-5 rounded-4xl shrink-0" />,
     },
     {
       id: "payments",
