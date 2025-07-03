@@ -43,7 +43,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Switch } from "./ui/switch";
-import { Label } from "./ui/label";
 
 const ShowtimeFormSchema = z.object({
   versionId: z.coerce.number().min(1, "Version is required"),
@@ -74,12 +73,38 @@ export default function ShowtimesPage() {
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
 
-  const [cinemas, setCinemas] = useState<any[]>([]);
+  interface Cinema {
+    cinemaId: number;
+    name: string;
+    city: string;
+    address: string;
+  }
+
+  const [cinemas, setCinemas] = useState<Cinema[]>([]);
   const [selectedCinemaId, setSelectedCinemaId] = useState<number | null>(null);
-  const [cinemaDetails, setCinemaDetails] = useState<any | null>(null);
-  const [movies, setMovies] = useState<any[]>([]);
+  interface CinemaDetails {
+    cinemaId: number;
+    name: string;
+    city: string;
+    address: string;
+    theaters: Theater[];
+  }
+  const [cinemaDetails, setCinemaDetails] = useState<CinemaDetails | null>(null);
+  interface Version {
+    versionId: number;
+    language: string;
+    format: string;
+  }
+
+  interface Movie {
+    movieId: number;
+    title: string;
+    versions: Version[];
+  }
+
+  const [movies, setMovies] = useState<Movie[]>([]);
   const [selectedMovieId, setSelectedMovieId] = useState<number | null>(null);
-  const [allCinemaDetails, setAllCinemaDetails] = useState<any[]>([]);
+  const [allCinemaDetails, setAllCinemaDetails] = useState<CinemaDetails[]>([]);
 
 
 
@@ -114,8 +139,7 @@ export default function ShowtimesPage() {
         const cinemasRes = await apiVenue.get("/api/cinemas");
         setCinemas(cinemasRes);
 
-        // Charger tous les détails une fois
-        const detailsPromises = cinemasRes.map((c: any) =>
+        const detailsPromises = (cinemasRes as Cinema[]).map((c: Cinema) =>
           apiVenue.get(`/api/cinemas/${c.cinemaId}`)
         );
         const allDetails = await Promise.all(detailsPromises);
@@ -173,8 +197,10 @@ export default function ShowtimesPage() {
   const openEdit = async (st: Showtime) => {
     setEditingSt(st);
 
+    type Version = { versionId: number; language: string; format: string };
+
     const movieWithVersion = movies.find((m) =>
-      (m.versions ?? []).some((v: any) => v.versionId === st.versionId)
+      (m.versions ?? []).some((v: Version) => v.versionId === st.versionId)
     );
     setSelectedMovieId(movieWithVersion ? movieWithVersion.movieId : null);
 
@@ -184,7 +210,7 @@ export default function ShowtimesPage() {
     for (const cinema of cinemas) {
       const details = await apiVenue.get(`/api/cinemas/${cinema.cinemaId}`);
       if (
-        (details.theaters ?? []).some((t: any) => t.theaterId === st.theaterId)
+        (details.theaters ?? []).some((t: { theaterId: number; name: string; capacity: number }) => t.theaterId === st.theaterId)
       ) {
         foundCinemaDetails = details;
         foundCinemaId = cinema.cinemaId;
@@ -261,16 +287,28 @@ export default function ShowtimesPage() {
     }
   };
 
+  interface Version {
+    versionId: number;
+    language: string;
+    format: string;
+  }
+
   function getVersionLabel(versionId: number) {
     for (const movie of movies) {
-      const version = movie.versions?.find((v: any) => v.versionId === versionId);
+      const version = movie.versions?.find((v: Version) => v.versionId === versionId);
       if (version) return `${movie.title} - ${version.language}/${version.format}`;
     }
   }
 
+  interface Theater {
+    theaterId: number;
+    name: string;
+    capacity: number;
+  }
+
   function getTheaterLabel(theaterId: number) {
     for (const cinema of allCinemaDetails) {
-      const theater = cinema.theaters?.find((t: any) => t.theaterId === theaterId);
+      const theater = cinema.theaters?.find((t: Theater) => t.theaterId === theaterId);
       if (theater) return `${theater.name} (${cinema.name})`;
     }
   }
@@ -465,7 +503,7 @@ export default function ShowtimesPage() {
                           <option value="">-- Select a version --</option>
                           {movies
                             .find((m) => m.movieId === selectedMovieId)
-                            ?.versions?.map((v: any) => (
+                            ?.versions?.map((v: Version) => (
                               <option key={v.versionId} value={v.versionId}>
                                 {v.language}/{v.format}
                               </option>
@@ -515,7 +553,7 @@ export default function ShowtimesPage() {
                           required
                         >
                           <option value="">-- Select a salle --</option>
-                          {cinemaDetails?.theaters?.map((t: any) => (
+                          {cinemaDetails?.theaters?.map((t: Theater) => (
                             <option key={t.theaterId} value={t.theaterId}>
                               {t.name} (Capacity: {t.capacity})
                             </option>
