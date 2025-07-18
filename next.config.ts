@@ -18,6 +18,10 @@ const nextConfig = {
         protocol: 'http',
         hostname: 'example.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'image.tmdb.org'
+      }
     ],
     // Uncomment below ONLY if you want to allow SVG avatars (use with caution!)
     // dangerouslyAllowSVG: true,

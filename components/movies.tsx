@@ -63,30 +63,35 @@ const Movies = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingMovie, setEditingMovie] = useState<Movie | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [movieToDelete, setMovieToDelete] = useState<string | null>(null);
-
   const [genresList, setGenresList] = useState<{ genreId: string; name: string }[]>([]);
 
-  // Genres fetch
   const fetchGenres = async () => {
     try {
       const response = await apiCatalog.get('/api/genres');
       setGenresList(response);
     } catch (err: unknown) {
-      console.error("Genres fetched error", err)
+      console.error("Genres fetched error", err);
     }
   };
 
   useEffect(() => { fetchGenres(); }, []);
 
-  // Movies fetch
   const fetchMovies = React.useCallback(async () => {
     setLoading(true);
     try {
-      const res = await apiCatalog.get(`/api/movies?search=${search}&page=${currentPage}&size=${MOVIES_PER_PAGE}`);
+      const res = await apiCatalog.get("/api/movies", {
+        page: currentPage - 1,
+        size: MOVIES_PER_PAGE,
+        sortBy: "releaseDate",
+        direction: "desc",
+        title: search,
+      });
       setMovies(res.content);
+      setTotalPages(res.totalPages);
     } catch (err) {
       console.error("❌ Failed to load or parse movies:", err);
     } finally {
@@ -97,7 +102,10 @@ const Movies = () => {
   useEffect(() => {
     fetchMovies();
   }, [fetchMovies]);
-  
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search]);
 
   function uniqueVersions(arr: { language: string; format: string }[]) {
     return arr.filter(
@@ -194,11 +202,7 @@ const Movies = () => {
     }
   };
 
-  // Pagination
-  const totalPages = Math.max(1, Math.ceil(movies.length / MOVIES_PER_PAGE));
-  const indexOfLast = currentPage * MOVIES_PER_PAGE;
-  const indexOfFirst = indexOfLast - MOVIES_PER_PAGE;
-  const currentMovies = movies.slice(indexOfFirst, indexOfLast);
+  const currentMovies = movies;
 
   return (
     <div className="space-y-6">

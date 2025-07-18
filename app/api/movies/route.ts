@@ -2,8 +2,6 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import apiCatalog from "@/utils/catalogApiFetch";
 
-const API_BASE = process.env.CATALOG_API_URL;
-
 export async function GET(req: Request) {
   const cookieStore = await cookies();
   const jwt = cookieStore.get("token")?.value;
@@ -16,64 +14,52 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const search = searchParams.get("search") || "";
     const pageParam = searchParams.get("page");
-    const page = !pageParam || isNaN(+pageParam) ? 0 : parseInt(pageParam, 10) - 1;
-    const size = searchParams.get("size") || "5";
+    const page = !pageParam || isNaN(+pageParam) ? 0 : parseInt(pageParam, 10);
+    const size = searchParams.get("size") || "10";
 
-    const url = new URL(`${API_BASE}/movies`);
-    url.searchParams.set("page", page.toString());
-    url.searchParams.set("size", size);
-    url.searchParams.set("sortBy", "releaseDate");
-    url.searchParams.set("direction", "desc");
+    const params: Record<string, string | number> = {
+      page,
+      size,
+      sortBy: "releaseDate",
+      direction: "desc",
+    };
 
     if (search) {
-      url.searchParams.set("title", search);
+      params.title = search;
     }
 
-    const response = await apiCatalog.get('/movies', {}, {
+    const response = await apiCatalog.get("/movies", params, {
       headers: {
         Authorization: `Bearer ${jwt}`,
-      }
+      },
     });
 
-    // if (!response.ok) {
-    //   console.error("❌ Backend error:", await response.text());
-    //   return NextResponse.json({ message: "Erreur backend!" }, { status: response.status });
-    // }
-
-    // const data = await response.json();
     return NextResponse.json(response);
-  } catch {
-    
-    return NextResponse.json(
-      { message: 'Erreur serveur!' },
-      { status: 500 }
-    );
+  } catch (err) {
+    console.error("❌ Erreur serveur:", err);
+    return NextResponse.json({ message: "Erreur serveur!" }, { status: 500 });
   }
 }
 
-
 export async function POST(request: Request) {
-
   const cookieStore = await cookies();
-  const jwt = cookieStore.get('token')?.value;
+  const jwt = cookieStore.get("token")?.value;
 
   if (!jwt) {
-    return NextResponse.json({ message: 'Non authentifié' }, { status: 401 });
+    return NextResponse.json({ message: "Non authentifié" }, { status: 401 });
   }
 
   try {
     const body = await request.json();
-    const response = await apiCatalog.post('/movies', body, {
+    const response = await apiCatalog.post("/movies", body, {
       headers: {
         Authorization: `Bearer ${jwt}`,
-      }
+      },
     });
 
     return NextResponse.json(response);
-  } catch {
-    return NextResponse.json(
-      { message: 'Erreur serveur!' },
-      { status: 500 }
-    );
+  } catch (err) {
+    console.error("❌ POST /movies failed:", err);
+    return NextResponse.json({ message: "Erreur serveur!" }, { status: 500 });
   }
 }
